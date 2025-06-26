@@ -13,6 +13,26 @@
         border: 1px solid black;
         border-collapse: collapse;
     }
+
+    .btn-edit {
+        outline: none;
+        border: none;
+        background-color: orange;
+        height: 25px;
+        width: 60px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    .btn-delete {
+        outline: none;
+        border: none;
+        background-color: #ff0023;
+        height: 25px;
+        width: 60px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
 </style>
 
 <body>
@@ -25,18 +45,36 @@
             <th>Phone Number</th>
             <th>Gender</th>
             <th>Role</th>
+            <th>Actions</th>
         </tr>
-        <% for(let i=0; i < dataTable.length; i++) { %> 
+        <% for(let i=0; i < dataTable.length; i++) { %>
             <tr>
-                <td><%= dataTable[i].email %></td>
-                <td><%= dataTable[i].firstName %></td>
-                <td><%= dataTable[i].lastName %></td>
-                <td><%= dataTable[i].address %></td>
-                <td><%= dataTable[i].phoneNumber %></td>
-                <td><%= dataTable[i].gender %></td>
-                <td><%= dataTable[i].roleId %></td>
-            </tr> 
-        <% } %>
+                <td>
+                    <%= dataTable[i].email %>
+                </td>
+                <td>
+                    <%= dataTable[i].firstName %>
+                </td>
+                <td>
+                    <%= dataTable[i].lastName %>
+                </td>
+                <td>
+                    <%= dataTable[i].address %>
+                </td>
+                <td>
+                    <%= dataTable[i].phoneNumber %>
+                </td>
+                <td>
+                    <%= dataTable[i].gender %>
+                </td>
+                <td>
+                    <%= dataTable[i].roleId %>
+                </td>
+                <td><a href="/edit-crud?id=<%= dataTable[i].id %>" class="btn-edit" type="button">Edit</a>
+                    <a class="btn-delete" type="button">Delete</a>
+                </td>
+            </tr>
+            <% } %>
     </table>
 </body>
 
