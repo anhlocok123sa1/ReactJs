@@ -1,5 +1,7 @@
 import axios from 'axios';
+// eslint-disable-next-line
 import _ from 'lodash';
+// eslint-disable-next-line
 import config from './config';
 
 const instance = axios.create({
@@ -9,6 +11,7 @@ const instance = axios.create({
 
 instance.interceptors.response.use(
     (response) => {
+        // eslint-disable-next-line
         const { data } = response;
         return response.data;
     }
