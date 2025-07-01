@@ -4,12 +4,14 @@ import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import './UserManage.scss';
 import { getAllUsers } from '../../services/userService'
+import ModalUser from './ModalUser';
 class UserManage extends Component {
 
     constructor(prop) {
         super(prop);
         this.state = {
-            arrUsers: []
+            arrUsers: [],
+            isOpenModalUsesr: false
         }
     }
 
@@ -24,7 +26,18 @@ class UserManage extends Component {
                 arrUsers: response.users
             })
         }
+    }
 
+    handleAddNewUser = () => {
+        this.setState({
+            isOpenModalUsesr: true
+        })
+    }
+
+    toggleUserModal = () => {
+        this.setState({
+            isOpenModalUsesr: !this.state.isOpenModalUsesr,
+        })
     }
 
 
@@ -32,8 +45,22 @@ class UserManage extends Component {
         let arrUsers = this.state.arrUsers;
         return (
             <div className="users-container">
+                <ModalUser
+                    isOpen={this.state.isOpenModalUsesr}
+                    test={'abc'}
+                    toggleFromParent={this.toggleUserModal}
+                />
                 <div className="title text-center">Manage user with React</div>
-                <div className="users-table">
+                <div className="mx-1">
+                    <button
+                        className='btn btn-primary px-3'
+                        onClick={() => this.handleAddNewUser()}
+                    >
+                        <i className='fas fa-plus'></i>
+                        Add new users
+                    </button>
+                </div>
+                <div className="users-table mt-3">
                     <table className="table table-bordered table-striped">
                         <thead>
                             <tr className='table-primary'>
