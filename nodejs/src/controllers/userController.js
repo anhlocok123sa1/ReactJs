@@ -50,7 +50,7 @@ let handleEditUser = async (req, res) => {
     return res.status(200).json(message);
 }
 
-let handleDeleteUser = async (req, res) => {
+let handleDeleteUser = async (req, res) => {    
     if(!req.body.id){
         return res.status(200).json({
             errCode:1,
