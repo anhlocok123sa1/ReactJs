@@ -1,17 +1,83 @@
 .section-specialty {
-    height: 500px;
-    background: #f5f5f5;
-    border: 1px solid red;
-}
+  background: #f5f5f5;
 
-//reset slick slider css
-.slick-prev {
-    border: 1px solid green !important;
-    position: relative !important;
-    left: 0 !important;
-}
+  .specialty-container {
+    margin: 0 50px;
+    display: flex;
+    flex-direction: column;
 
-.slick-next {
-    border: 1px solid green !important;
-    right: 0 !important;
+    .specialty-header {
+      height: 60px;
+      margin-bottom: 20px;
+      padding-top: 20px;
+
+      .title-section {
+        font-size: 22px;
+        font-weight: 600;
+      }
+
+      .btn-section {
+        float: right;
+        padding: 10px 15px;
+        border: none;
+        outline: none;
+        display: block;
+        background-color: #ebebeb;
+        color: black;
+        cursor: pointer;
+        text-transform: uppercase;
+
+        &:hover {
+            color: #fff;
+            background-color: #f7d800;
+        }
+      }
+    }
+    .specialty-body {
+      .img-customize {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        img {
+          width: 329px;
+        }
+      }
+      //reset slick slider css
+      .slick-prev {
+        height: 45px !important;
+        width: 40px !important;
+        z-index: 10;
+        background: #45c3d2 !important;
+        opacity: 0.7;
+        //   left: -10px !important;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+
+      .slick-prev:before {
+        font-family: FontAwesome !important;
+        content: "\f053" !important;
+      }
+
+      .slick-next {
+        height: 45px !important;
+        width: 40px !important;
+        z-index: 10;
+        background: #45c3d2 !important;
+        opacity: 0.7;
+        //   right: -10px !important;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+
+      .slick-next:before {
+        font-family: FontAwesome !important;
+        content: "\f054" !important;
+      }
+    }
+  }
 }
