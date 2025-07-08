@@ -1,58 +1,57 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './Specialty.scss'
 import { FormattedMessage } from 'react-intl';
 
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import specialtyImg from '../../../assets/specialty/iStock-1366650119.jpg'
+import HandBookImg from '../../../assets/hand-book/105523-chuyen-gia-tham-van-tu-van-tam-ly-hon-nhan-gia-dinh-uy-tin.jpg'
 
-class Specialty extends Component {
+class HandBook extends Component {
 
 
     render() {
         
         return (
-            <div className="section-share section-specialty">
+            <div className="section-share section-hand-book">
                 <div className="section-container">
                     <div className="section-header">
-                        <span className='title-section'>Chuyên khoa phổ biến</span>
+                        <span className='title-section'>Cẩm nang</span>
                         <button className='btn-section'>Xem thêm</button>
                     </div>
                     <div className="section-body">
                         <Slider {...this.props.settings}>
                             <div className='img-customize'>
-                                <img src={specialtyImg} alt="specialtyImg" />
+                                <img src={HandBookImg} alt="HandBookImg" />
                                 <span>Cơ xương khớp 1</span>
                             </div>
                             <div className='img-customize'>
-                                <img src={specialtyImg} alt="specialtyImg" />
+                                <img src={HandBookImg} alt="HandBookImg" />
                                 <span>Cơ xương khớp 2</span>
                             </div>
                             <div className='img-customize'>
-                                <img src={specialtyImg} alt="specialtyImg" />
+                                <img src={HandBookImg} alt="HandBookImg" />
                                 <span>Cơ xương khớp 3</span>
                             </div>
                             <div className='img-customize'>
-                                <img src={specialtyImg} alt="specialtyImg" />
+                                <img src={HandBookImg} alt="HandBookImg" />
                                 <span>Cơ xương khớp 4</span>
                             </div>
                             <div className='img-customize'>
-                                <img src={specialtyImg} alt="specialtyImg" />
+                                <img src={HandBookImg} alt="HandBookImg" />
                                 <span>Cơ xương khớp 5</span>
                             </div>
                             <div className='img-customize'>
-                                <img src={specialtyImg} alt="specialtyImg" />
+                                <img src={HandBookImg} alt="HandBookImg" />
                                 <span>Cơ xương khớp 6</span>
                             </div>
                             <div className='img-customize'>
-                                <img src={specialtyImg} alt="specialtyImg" />
+                                <img src={HandBookImg} alt="HandBookImg" />
                                 <span>Cơ xương khớp 7</span>
                             </div>
                             <div className='img-customize'>
-                                <img src={specialtyImg} alt="specialtyImg" />
+                                <img src={HandBookImg} alt="HandBookImg" />
                                 <span>Cơ xương khớp 8</span>
                             </div>
                         </Slider>
@@ -75,4 +74,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Specialty);
+export default connect(mapStateToProps, mapDispatchToProps)(HandBook);
