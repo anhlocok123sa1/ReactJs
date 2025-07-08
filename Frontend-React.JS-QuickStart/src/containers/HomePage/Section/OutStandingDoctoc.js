@@ -27,9 +27,8 @@ class OutStandingDoctoc extends Component {
                                         <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
                                     </div>
                                     <div className="position text-center">
-                                        <div>Phó giáo sư, Tiến sĩ, Bác sĩ CK II</div>
-                                        <div>Nguyễn Văn Quýnh</div>
-                                        <div>Tim mạch</div>
+                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
+                                        <p>Tim mạch</p>
                                     </div>
                                 </div>
                             </div>
@@ -39,9 +38,8 @@ class OutStandingDoctoc extends Component {
                                         <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
                                     </div>
                                     <div className="position text-center">
-                                        <div>Phó giáo sư, Tiến sĩ, Bác sĩ CK II</div>
-                                        <div>Nguyễn Văn Quýnh</div>
-                                        <div>Tim mạch</div>
+                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
+                                        <p>Tim mạch</p>
                                     </div>
                                 </div>
                             </div>
@@ -51,9 +49,8 @@ class OutStandingDoctoc extends Component {
                                         <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
                                     </div>
                                     <div className="position text-center">
-                                        <div>Phó giáo sư, Tiến sĩ, Bác sĩ CK II</div>
-                                        <div>Nguyễn Văn Quýnh</div>
-                                        <div>Tim mạch</div>
+                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
+                                        <p>Tim mạch</p>
                                     </div>
                                 </div>
                             </div>
@@ -63,9 +60,8 @@ class OutStandingDoctoc extends Component {
                                         <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
                                     </div>
                                     <div className="position text-center">
-                                        <div>Phó giáo sư, Tiến sĩ, Bác sĩ CK II</div>
-                                        <div>Nguyễn Văn Quýnh</div>
-                                        <div>Tim mạch</div>
+                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
+                                        <p>Tim mạch</p>
                                     </div>
                                 </div>
                             </div>
@@ -75,9 +71,8 @@ class OutStandingDoctoc extends Component {
                                         <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
                                     </div>
                                     <div className="position text-center">
-                                        <div>Phó giáo sư, Tiến sĩ, Bác sĩ CK II</div>
-                                        <div>Nguyễn Văn Quýnh</div>
-                                        <div>Tim mạch</div>
+                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
+                                        <p>Tim mạch</p>
                                     </div>
                                 </div>
                             </div>
@@ -87,9 +82,8 @@ class OutStandingDoctoc extends Component {
                                         <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
                                     </div>
                                     <div className="position text-center">
-                                        <div>Phó giáo sư, Tiến sĩ, Bác sĩ CK II</div>
-                                        <div>Nguyễn Văn Quýnh</div>
-                                        <div>Tim mạch</div>
+                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
+                                        <p>Tim mạch</p>
                                     </div>
                                 </div>
                             </div>
@@ -99,9 +93,8 @@ class OutStandingDoctoc extends Component {
                                         <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
                                     </div>
                                     <div className="position text-center">
-                                        <div>Phó giáo sư, Tiến sĩ, Bác sĩ CK II</div>
-                                        <div>Nguyễn Văn Quýnh</div>
-                                        <div>Tim mạch</div>
+                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
+                                        <p>Tim mạch</p>
                                     </div>
                                 </div>
                             </div>
@@ -111,9 +104,8 @@ class OutStandingDoctoc extends Component {
                                         <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
                                     </div>
                                     <div className="position text-center">
-                                        <div>Phó giáo sư, Tiến sĩ, Bác sĩ CK II</div>
-                                        <div>Nguyễn Văn Quýnh</div>
-                                        <div>Tim mạch</div>
+                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
+                                        <p>Tim mạch</p>
                                     </div>
                                 </div>
                             </div>

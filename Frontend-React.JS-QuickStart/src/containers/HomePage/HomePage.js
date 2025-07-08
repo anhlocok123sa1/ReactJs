@@ -5,13 +5,14 @@ import Specialty from './Section/Specialty';
 import MedicalFacility from './Section/MedicalFacility';
 import OutStandingDoctoc from './Section/OutStandingDoctoc';
 import HandBook from './Section/HandBook';
+import About from './Section/About';
+import HomeFooter from './HomeFooter';
 import './HomePage.scss'
 
 class HomePage extends Component {
 
     render() {
         let settings = {
-            dots: true,
             infinite: true,
             speed: 500,
             slidesToShow: 4,
@@ -24,6 +25,8 @@ class HomePage extends Component {
                 <MedicalFacility settings={settings} />
                 <OutStandingDoctoc settings={settings} />
                 <HandBook settings={settings} />
+                <About />
+                <HomeFooter />
             </>
         );
     }
