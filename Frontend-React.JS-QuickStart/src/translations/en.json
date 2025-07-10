@@ -8,7 +8,8 @@
     "select-doctor": "Select a top doctor",
     "fee": "Health Checkup Package",
     "check-health": "General health check",
-    "support": "Support"
+    "support": "Support",
+    "welcome": "Welcome"
   },
   "banner": {
     "title1": "Healthcare Platform",
@@ -47,17 +48,18 @@
     "userpass-wrong": "Invalid username or password!"
   },
   "menu": {
-    "system": {
-      "header": "System",
-      "system-administrator": {
-        "header": "System Administrator",
-        "user-manage": "User manage",
-        "user-redux": "User redux manage",
-        "register-package-group-or-account": "Register service package for group/account"
-      },
-      "system-parameter": {
-        "header": "System-parameter"
-      }
+    "admin": {
+      "manage-user": "Users System",
+      "manage-doctor": "Manage doctors",
+      "manage-admin": "Manage admins",
+      "crud": "CRUD user",
+      "crud-redux": "CRUD Redux",
+      "clinic": "Clinics",
+      "manage-clinic": "Manage clinics",
+      "specialty": "Specialties",
+      "manage-specialty": "Manage specialties",
+      "handbook": "Handbook",
+      "manage-handbook": "Manage handbook"
     }
   },
   "system": {
