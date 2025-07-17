@@ -7,6 +7,8 @@ const initialState = {
     roles: [],
     isLoadingPosition: false,
     positions: [],
+    allUsers:[],
+    isLoadingAllUsers: false,
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -96,6 +98,36 @@ const adminReducer = (state = initialState, action) => {
             copyState.isLoadingPosition = false;
             copyState.positions = [];
             // console.log('fetch position failed: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+
+        //ALL USERS
+        case actionTypes.FETCH_ALL_USERS_START: {
+            let copyState = { ...state };
+            copyState.isLoadingAllUsers = true;
+            // console.log('fetch all users start: ', action);
+            return {
+                ...copyState,
+            };
+        }
+
+        case actionTypes.FETCH_ALL_USERS_SUCCESS: {
+            let copyState = { ...state };
+            copyState.allUsers = action.data;
+            copyState.isLoadingAllUsers = false;
+            // console.log('fetch all users success: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+
+        case actionTypes.FETCH_ALL_USERS_FAILED: {
+            let copyState = { ...state };
+            copyState.isLoadingAllUsers = false;
+            copyState.allUsers = [];
+            // console.log('fetch all users failed: ', copyState);
             return {
                 ...copyState,
             };

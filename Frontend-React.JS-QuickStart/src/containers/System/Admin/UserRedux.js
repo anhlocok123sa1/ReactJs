@@ -6,6 +6,7 @@ import * as actions from '../../../store/actions';
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
 import './UserRedux.scss'
+import TableManageUser from './TableManageUser';
 
 class UserRedux extends Component {
     constructor(props) {
@@ -26,7 +27,8 @@ class UserRedux extends Component {
             gender: '',
             position: '',
             role: '',
-            avatar: ''
+            avatar: '',
+            arrCheck: { email: 'Email', password: 'Mật khẩu', firstName: 'Tên', lastName: 'Họ', phoneNumber: 'Số điện thoại', address: 'Địa chỉ' },
         };
     }
 
@@ -57,6 +59,20 @@ class UserRedux extends Component {
                 positionArr: arrPositions,
                 position: arrPositions && arrPositions.length > 0 ? arrPositions[0].key : ''
             });
+        }
+        if (prevProps.allUsers !== this.props.allUsers) {
+            this.setState({
+                email: '',
+                password: '',
+                firstName: '',
+                lastName: '',
+                phoneNumber: '',
+                address: '',
+                gender: '',
+                position: '',
+                role: '',
+                avatar: '',
+            })
         }
     }
 
@@ -94,9 +110,8 @@ class UserRedux extends Component {
             gender: this.state.gender,
             roleId: this.state.role,
             position: this.state.position,
-            image:this.state.avatar
+            image: this.state.avatar
         })
-
     }
 
     onChangeInput = (e, id) => {
@@ -109,15 +124,29 @@ class UserRedux extends Component {
 
     checkValidateInput = () => {
         let isValid = true;
-        let arrCheck = ['email', 'password', 'firstName', 'lastName', 'phoneNumber', 'address']
-        for (let i = 0; i < arrCheck.length; i++) {
-            if (!this.state[arrCheck[i]]) {
+        if (this.props.language === 'en') {
+            this.setState({
+                arrCheck: { email: 'Email', password: 'Password', firstName: 'First name', lastName: 'Last name', phoneNumber: 'Phone number', address: 'Address' }
+            })
+        } else {
+            this.setState({
+                arrCheck: { email: 'Email', password: 'Mật khẩu', firstName: 'Tên', lastName: 'Họ', phoneNumber: 'Số điện thoại', address: 'Địa chỉ' }
+            })
+        }
+        for (let i = 0; i < Object.keys(this.state.arrCheck).length; i++) {
+            let key = Object.keys(this.state.arrCheck)[i];
+            // console.log('key: ', key);
+            if (!this.state[key]) {
                 isValid = false;
-                alert('This input is required: ' + arrCheck[i])
+                if (this.props.language === 'en') {
+                    alert('This input is required: ' + this.state.arrCheck[key]);
+                } else {
+                    alert('Ô dữ liệu cần phải nhập vào: ' + this.state.arrCheck[key]);
+                }
                 break;
             }
         }
-        return isValid
+        return isValid;
     }
 
     render() {
@@ -257,12 +286,15 @@ class UserRedux extends Component {
                                 </div>
                             </div>
 
-                            <div className="col-12 mt-3">
+                            <div className="col-12 my-3">
                                 <button className='btn btn-primary'
                                     onClick={() => this.handleSaveUser()}
                                 >
                                     <FormattedMessage id="manage-user.save" />
                                 </button>
+                            </div>
+                            <div className="col-12 mb-5">
+                                <TableManageUser />
                             </div>
                         </div>
                     </div>
@@ -287,6 +319,7 @@ const mapStateToProps = state => {
         isLoadingGender: state.admin.isLoadingGender,
         isLoadingRole: state.admin.isLoadingRole,
         isLoadingPosition: state.admin.isLoadingPosition,
+        allUsers: state.admin.allUsers,
     };
 };
 
@@ -296,7 +329,8 @@ const mapDispatchToProps = dispatch => {
         getGenderStart: () => dispatch(actions.fetchGenderStart()),
         getRoleStart: () => dispatch(actions.fetchRoleStart()),
         getPositionStart: () => dispatch(actions.fetchPositionStart()),
-        createNewUser: (data) => dispatch(actions.createNewUser(data))
+        createNewUser: (data) => dispatch(actions.createNewUser(data)),
+        fetchUserRedux: () => dispatch(actions.fetchAllUsersStart())
     };
 };
 
