@@ -111,6 +111,7 @@ let createNewUser = async (data) => {
                 })
             } else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password)
+                // console.log(data);
                 await db.User.create({
                     email: data.email,
                     password: hashPasswordFromBcrypt,
@@ -120,7 +121,7 @@ let createNewUser = async (data) => {
                     phoneNumber: data.phoneNumber,
                     gender: data.gender,
                     roleId: data.roleId,
-                    position: data.position,
+                    positionId: data.position,
                     image: JSON.stringify(data.image)
                 })
                 resolve({
@@ -163,7 +164,7 @@ let deleteUser = async (userId) => {
 let editUser = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.id) {
+            if (!data.id || !data.roleId || !data.positionId ||!data.gender) {
                 resolve({
                     errCode: 2,
                     errMessage: "Missing required parameter!"
@@ -178,7 +179,12 @@ let editUser = async (data) => {
                 user.lastName = data.lastName;
                 user.address = data.address;
                 user.phoneNumber = data.phoneNumber;
-
+                user.roleId = data.roleId;
+                user.positionId = data.positionId;
+                user.gender = data.gender;
+                if (data.image) {
+                    user.image = JSON.stringify(data.image);
+                }
                 await user.save();
 
                 resolve({

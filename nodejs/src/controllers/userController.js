@@ -40,6 +40,7 @@ let handleGetAllUsers = async (req, res) => {
 }
 
 let handleCreateNewUser = async (req, res) => {
+    // console.log('Check req:',req);
     let message = await userServices.createNewUser(req.body);
     return res.status(200).json(message)
 }

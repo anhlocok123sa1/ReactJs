@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import * as actions from '../../../store/actions';
 import { connect } from 'react-redux';
+import { emitter } from '../../../utils/emitter';
 
 class TableManageUser extends Component {
 
@@ -29,9 +30,14 @@ class TableManageUser extends Component {
         this.props.deleteUser(user.id);
     }
 
+    handleEditUser = (user) => {
+        // console.log('Check edit user: ', user);
+        emitter.emit('EVENT_FILL_EDIT', user);
+        //Another way to transfer user(child) to UserRedux(parent)
+        // this.props.handleEditUserFromParent(user)
+    }
+
     render() {
-        console.log('Check all user: ', this.props.allUsers);
-        console.log('Check state: ', this.state.userRedux);
         let arrUsers = this.state.userRedux
 
         return (
