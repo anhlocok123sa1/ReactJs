@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { LANGUAGES, CRUD_ACTIONS } from '../../../utils';
+import { LANGUAGES, CRUD_ACTIONS, CommonUtils } from '../../../utils';
 import * as actions from '../../../store/actions';
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
@@ -39,11 +39,20 @@ class UserRedux extends Component {
     }
 
     listenToEmitter() {
-        emitter.on('EVENT_FILL_EDIT', (user) => {
-
+        emitter.on('EVENT_FILL_EDIT', async (user) => {
+            let previewImgURL = '';
+            if (user.image) {
+                // If user.image is a Buffer, convert it to base64
+                if (user.image.data) {
+                    previewImgURL = await CommonUtils.bufferToBase64(user.image.data);
+                } else if (typeof user.image === 'string' && user.image.startsWith('data:image')) {
+                    // If already a base64 string
+                    previewImgURL = user.image;
+                }
+            }
             this.setState({
                 email: user.email,
-                password: 'HARDCODED', // Password should not be hardcoded in production
+                password: 'HARDCODED',
                 firstName: user.firstName,
                 lastName: user.lastName,
                 phoneNumber: user.phoneNumber,
@@ -51,12 +60,11 @@ class UserRedux extends Component {
                 gender: user.gender,
                 role: user.roleId,
                 position: user.positionId,
-                avatar: user.avatar,
+                avatar: user.image,
+                previewImgURL: previewImgURL,
                 action: CRUD_ACTIONS.EDIT,
                 userEditId: user.id,
-            }
-                // , () => console.log('Check setstate: ', this.state)
-            )
+            }, () => console.log('Check state: ', this.state))
         })
     }
 
@@ -104,18 +112,21 @@ class UserRedux extends Component {
                 position: arrPositions && arrPositions.length > 0 ? arrPositions[0].key : '',
                 avatar: '',
                 action: CRUD_ACTIONS.CREATE,
+                previewImgURL: '',
             })
         }
     }
 
-    handleOnChangeImage = (event) => {
+    handleOnChangeImage = async (event) => {
         let data = event.target.files;
         let file = data[0]
         if (file) {
+            let base64 = await CommonUtils.getBase64(file);
+            // console.log('Check base64 Image: ', base64);
             let objectURL = URL.createObjectURL(file);
             this.setState({
                 previewImgURL: objectURL,
-                avatar: file
+                avatar: base64
             })
         }
     }
@@ -145,7 +156,7 @@ class UserRedux extends Component {
                 positionId: this.state.position,
                 avatar: this.state.avatar
             });
-        } 
+        }
         if (action === CRUD_ACTIONS.CREATE) {
             this.props.createNewUser({
                 email: this.state.email,

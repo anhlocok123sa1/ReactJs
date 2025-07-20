@@ -111,7 +111,7 @@ let createNewUser = async (data) => {
                 })
             } else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password)
-                // console.log(data);
+                console.log("Check image: ",data);
                 await db.User.create({
                     email: data.email,
                     password: hashPasswordFromBcrypt,
@@ -122,7 +122,7 @@ let createNewUser = async (data) => {
                     gender: data.gender,
                     roleId: data.roleId,
                     positionId: data.position,
-                    image: JSON.stringify(data.image)
+                    image: data.avatar
                 })
                 resolve({
                     errCode: 0,
@@ -182,8 +182,8 @@ let editUser = async (data) => {
                 user.roleId = data.roleId;
                 user.positionId = data.positionId;
                 user.gender = data.gender;
-                if (data.image) {
-                    user.image = JSON.stringify(data.image);
+                if (data.avatar) {
+                    user.image = data.avatar;
                 }
                 await user.save();
 
