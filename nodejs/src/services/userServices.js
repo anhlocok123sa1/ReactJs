@@ -111,7 +111,7 @@ let createNewUser = async (data) => {
                 })
             } else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password)
-                console.log("Check image: ",data);
+                // console.log("Check image: ",data);
                 await db.User.create({
                     email: data.email,
                     password: hashPasswordFromBcrypt,

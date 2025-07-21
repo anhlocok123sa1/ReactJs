@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes';
-import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices } from '../../services/userService';
+import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices } from '../../services/userService';
 import { toast } from 'react-toastify';
 
 // GENDER
@@ -198,3 +198,31 @@ export const editUserSuccess = () => ({
 export const editUserFailed = () => ({
     type: actionTypes.EDIT_USER_FAILED,
 })
+
+//FETCH TOP DOCTOR HOME
+export const fetchTopDoctorHome = () => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_TOP_DOCTOR_HOME_START });
+            let res = await getTopDoctorHomeServices(10);
+            // console.log('Check response fetch top doctor home: ', res);
+            if (res && res.errCode === 0) {
+                dispatch(fetchTopDoctorHomeSuccess(res.data));
+            } else {
+                dispatch(fetchTopDoctorHomeFailed());
+            }
+        } catch (e) {
+            dispatch(fetchTopDoctorHomeFailed());
+            console.log('fetch top doctor home error: ', e);
+        }
+    };
+}
+
+export const fetchTopDoctorHomeSuccess = (data) => ({
+    type: actionTypes.FETCH_TOP_DOCTOR_HOME_SUCCESS,
+    data: data
+});
+
+export const fetchTopDoctorHomeFailed = () => ({
+    type: actionTypes.FETCH_TOP_DOCTOR_HOME_FAILED
+});

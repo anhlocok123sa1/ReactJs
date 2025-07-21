@@ -7,10 +7,34 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+import { LANGUAGES } from '../../../utils/constant';
+import * as actions from '../../../store/actions';
+import { CommonUtils } from '../../../utils';
+
 class OutStandingDoctoc extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            arrTopDoctors: []
+        };
+    }
 
+    componentDidMount() {
+        this.props.fetchTopDoctorHome();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.topDoctorsRedux !== this.props.topDoctorsRedux) {
+            this.setState({
+                arrTopDoctors: this.props.topDoctorsRedux
+            });
+        }
+    }
     render() {
-
+        console.log('check top doctors:', this.props.topDoctorsRedux);
+        let { arrTopDoctors } = this.state;
+        arrTopDoctors = arrTopDoctors.concat(arrTopDoctors).concat(arrTopDoctors); // Duplicate for better slider effect
+        let language = this.props.language
         return (
             <div className="section-share section-outstanding-doctor">
                 <div className="section-container">
@@ -20,96 +44,31 @@ class OutStandingDoctoc extends Component {
                     </div>
                     <div className="section-body">
                         <Slider {...this.props.settings}>
-
-                            <div className='img-customize'>
-                                <div className='customize-border'>
-                                    <div className="outer-bg">
-                                        <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
-                                    </div>
-                                    <div className="position text-center">
-                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
-                                        <p>Tim mạch</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='img-customize'>
-                                <div className='customize-border'>
-                                    <div className="outer-bg">
-                                        <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
-                                    </div>
-                                    <div className="position text-center">
-                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
-                                        <p>Tim mạch</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='img-customize'>
-                                <div className='customize-border'>
-                                    <div className="outer-bg">
-                                        <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
-                                    </div>
-                                    <div className="position text-center">
-                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
-                                        <p>Tim mạch</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='img-customize'>
-                                <div className='customize-border'>
-                                    <div className="outer-bg">
-                                        <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
-                                    </div>
-                                    <div className="position text-center">
-                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
-                                        <p>Tim mạch</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='img-customize'>
-                                <div className='customize-border'>
-                                    <div className="outer-bg">
-                                        <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
-                                    </div>
-                                    <div className="position text-center">
-                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
-                                        <p>Tim mạch</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='img-customize'>
-                                <div className='customize-border'>
-                                    <div className="outer-bg">
-                                        <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
-                                    </div>
-                                    <div className="position text-center">
-                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
-                                        <p>Tim mạch</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='img-customize'>
-                                <div className='customize-border'>
-                                    <div className="outer-bg">
-                                        <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
-                                    </div>
-                                    <div className="position text-center">
-                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
-                                        <p>Tim mạch</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='img-customize'>
-                                <div className='customize-border'>
-                                    <div className="outer-bg">
-                                        <img src={OutStandingDoctocImg} alt="OutStandingDoctocImg" />
-                                    </div>
-                                    <div className="position text-center">
-                                        <p className='text-break fw-bold fs-5' style={{ maxWidth:'240px' }}>Phó giáo sư, Tiến sĩ, Bác sĩ CK II Nguyễn Văn Quýnh</p>
-                                        <p>Tim mạch</p>
-                                    </div>
-                                </div>
-                            </div>
-
+                            {arrTopDoctors && arrTopDoctors.length > 0 &&
+                                arrTopDoctors.map((item, index) => {
+                                    let image = '';
+                                    if (!item.image) {
+                                        image = OutStandingDoctocImg; // Fallback image
+                                    } else {
+                                        image = CommonUtils.bufferToBase64(item.image);
+                                    }
+                                    let name = `${language === LANGUAGES.VI ? item.positionData.valueVi : item.positionData.valueEn}, ${item.firstName} ${item.lastName}`;
+                                    
+                                    return (
+                                        <div className='img-customize' key={index}>
+                                            <div className='customize-border'>
+                                                <div className="outer-bg">
+                                                    <img src={image} alt={item.name} />
+                                                </div>
+                                                <div className="position text-center">
+                                                    <p className='text-break fw-bold fs-5' style={{ maxWidth: '240px' }}>{name}</p>
+                                                    <p>{item.positionData.valueVi}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            }
                         </Slider>
                     </div>
                 </div>
@@ -121,12 +80,15 @@ class OutStandingDoctoc extends Component {
 
 const mapStateToProps = state => {
     return {
-        isLoggedIn: state.user.isLoggedIn
+        isLoggedIn: state.user.isLoggedIn,
+        topDoctorsRedux: state.admin.topDoctors,
+        language: state.app.language
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        fetchTopDoctorHome: () => dispatch(actions.fetchTopDoctorHome())
     };
 };
 
