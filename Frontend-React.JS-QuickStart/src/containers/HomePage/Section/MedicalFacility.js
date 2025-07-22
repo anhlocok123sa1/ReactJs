@@ -6,6 +6,7 @@ import medicalFacilityImg from '../../../assets/medical-facility/093035-benh-vie
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { FormattedMessage } from 'react-intl';
 
 class MedicalFacility extends Component {
 
@@ -15,8 +16,12 @@ class MedicalFacility extends Component {
             <div className="section-share section-medical-facility">
                 <div className="section-container">
                     <div className="section-header">
-                        <span className='title-section'>Cơ sở y tế nổi bật</span>
-                        <button className='btn-section'>Xem thêm</button>
+                        <span className='title-section'>
+                            <FormattedMessage id="home-page.outstanding-health-facility" />
+                        </span>
+                        <button className='btn-section'>
+                            <FormattedMessage id="home-page.see-more" />
+                        </button>
                     </div>
                     <div className="section-body">
                         <Slider {...this.props.settings}>

@@ -70,5 +70,13 @@
     "image": "Ảnh đại diện",
     "save": "Lưu",
     "edit": "Sửa"
+  },
+  "home-page": {
+    "outstanding-doctor": "Bác sĩ nổi bật",
+    "top-doctor": "Bác sĩ hàng đầu",
+    "see-more": "Xem thêm",
+    "outstanding-specialty": "Chuyên khoa nổi bật",
+    "outstanding-health-facility": "Cơ sở y tế nổi bật",
+    "handbook": "Cẩm nang sức khỏe"
   }
 }

@@ -10,6 +10,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { LANGUAGES } from '../../../utils/constant';
 import * as actions from '../../../store/actions';
 import { CommonUtils } from '../../../utils';
+import { FormattedMessage } from 'react-intl';
 
 class OutStandingDoctoc extends Component {
     constructor(props) {
@@ -31,16 +32,18 @@ class OutStandingDoctoc extends Component {
         }
     }
     render() {
-        console.log('check top doctors:', this.props.topDoctorsRedux);
         let { arrTopDoctors } = this.state;
-        arrTopDoctors = arrTopDoctors.concat(arrTopDoctors).concat(arrTopDoctors); // Duplicate for better slider effect
         let language = this.props.language
         return (
             <div className="section-share section-outstanding-doctor">
                 <div className="section-container">
                     <div className="section-header">
-                        <span className='title-section'>Bác sĩ nổi bật tuần qua</span>
-                        <button className='btn-section'>Xem thêm</button>
+                        <span className='title-section'>
+                            <FormattedMessage id="home-page.outstanding-doctor" />
+                        </span>
+                        <button className='btn-section'>
+                            <FormattedMessage id="home-page.see-more" />
+                        </button>
                     </div>
                     <div className="section-body">
                         <Slider {...this.props.settings}>
@@ -52,8 +55,8 @@ class OutStandingDoctoc extends Component {
                                     } else {
                                         image = CommonUtils.bufferToBase64(item.image);
                                     }
-                                    let name = `${language === LANGUAGES.VI ? item.positionData.valueVi : item.positionData.valueEn}, ${item.firstName} ${item.lastName}`;
-                                    
+                                    let name = `${language === LANGUAGES.VI ? item.positionData.valueVi + `, ` + item.lastName + ` ` + item.firstName : item.positionData.valueEn + `, ` + item.firstName + ` ` + item.lastName}`;
+
                                     return (
                                         <div className='img-customize' key={index}>
                                             <div className='customize-border'>

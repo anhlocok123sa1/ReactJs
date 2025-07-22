@@ -70,5 +70,13 @@
     "image": "Avatar",
     "save": "Save",
     "edit": "Edit"
+  },
+  "home-page": {
+    "outstanding-doctor": "Outstanding Doctors",
+    "top-doctor": "Top Doctors",
+    "see-more": "See more",
+    "outstanding-specialty": "Outstanding Specialties",
+    "outstanding-health-facility": "Outstanding Health Facilities",
+    "handbook": "Health Handbook"
   }
 }
