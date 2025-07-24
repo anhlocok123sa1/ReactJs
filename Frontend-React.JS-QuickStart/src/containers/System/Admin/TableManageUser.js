@@ -5,6 +5,22 @@ import * as actions from '../../../store/actions';
 import { connect } from 'react-redux';
 import { emitter } from '../../../utils/emitter';
 
+import MarkdownIt from 'markdown-it';
+import MdEditor from 'react-markdown-editor-lite';
+// import style manually
+import 'react-markdown-editor-lite/lib/index.css';
+
+// Register plugins if required
+// MdEditor.use(YOUR_PLUGINS_HERE);
+
+// Initialize a markdown parser
+const mdParser = new MarkdownIt(/* Markdown-it options */);
+
+// Finish!
+function handleEditorChange({ html, text }) {
+  console.log('handleEditorChange', html, text);
+}
+
 class TableManageUser extends Component {
 
     constructor(prop) {
@@ -41,42 +57,45 @@ class TableManageUser extends Component {
         let arrUsers = this.state.userRedux
 
         return (
-            <table className="table table-bordered table-striped">
-                <thead>
-                    <tr className='table-primary'>
-                        <th scope="col">#</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">First name</th>
-                        <th scope="col">Last name</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {arrUsers && arrUsers.map((item, index) => {
-                        return (
-                            <tr key={index}>
-                                <th scope="row">{index + 1}</th>
-                                <td>{item.email}</td>
-                                <td>{item.firstName}</td>
-                                <td>{item.lastName}</td>
-                                <td>{item.address}</td>
-                                <td>
-                                    <button type="button" className="btn-edit" onClick={() => this.handleEditUser(item)}>
-                                        <i className="fas fa-pencil-alt"></i>
-                                    </button>
-                                    <button type="button" className="btn-delete" onClick={() => this.handleDeleteUser(item)}>
-                                        <i className="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        )
-                    })
-
-                    }
-
-                </tbody>
-            </table>
+            <React.Fragment>
+                <table className="table table-bordered table-striped">
+                    <thead>
+                        <tr className='table-primary'>
+                            <th scope="col">#</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">First name</th>
+                            <th scope="col">Last name</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {arrUsers && arrUsers.map((item, index) => {
+                            return (
+                                <tr key={index}>
+                                    <th scope="row">{index + 1}</th>
+                                    <td>{item.email}</td>
+                                    <td>{item.firstName}</td>
+                                    <td>{item.lastName}</td>
+                                    <td>{item.address}</td>
+                                    <td>
+                                        <button type="button" className="btn-edit" onClick={() => this.handleEditUser(item)}>
+                                            <i className="fas fa-pencil-alt"></i>
+                                        </button>
+                                        <button type="button" className="btn-delete" onClick={() => this.handleDeleteUser(item)}>
+                                            <i className="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            )
+                        })
+    
+                        }
+    
+                    </tbody>
+                </table>
+                <MdEditor style={{ height: '500px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
+            </React.Fragment>
         );
     }
 

@@ -47,7 +47,16 @@ let handleCreateNewUser = async (req, res) => {
 
 let handleEditUser = async (req, res) => {
     let data = req.body;
-    let message = await userServices.editUser(data);
+    // console.log(data);
+    let message = ''
+    try {
+        message = await userServices.editUser(data);
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from server"
+        })
+    }
     return res.status(200).json(message);
 }
 

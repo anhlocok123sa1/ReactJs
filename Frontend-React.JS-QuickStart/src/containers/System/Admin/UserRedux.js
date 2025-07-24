@@ -45,6 +45,7 @@ class UserRedux extends Component {
                 // If user.image is a Buffer, convert it to base64
                 if (user.image.data) {
                     previewImgURL = await CommonUtils.bufferToBase64(user.image.data);
+                    user.image = previewImgURL; // Update user.image to be a base64 string
                 } else if (typeof user.image === 'string' && user.image.startsWith('data:image')) {
                     // If already a base64 string
                     previewImgURL = user.image;
