@@ -7,10 +7,13 @@ const initialState = {
     roles: [],
     isLoadingPosition: false,
     positions: [],
-    allUsers:[],
     isLoadingAllUsers: false,
-    topDoctors: [],
+    allUsers:[],
     isLoadingTopDoctors: false,
+    topDoctors: [],
+    isLoadingAllDoctors: false,
+    allDoctors:[],
+    
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -158,6 +161,33 @@ const adminReducer = (state = initialState, action) => {
             copyState.isLoadingTopDoctors = false;
             copyState.topDoctors = [];
             // console.log('fetch top doctor failed: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+        //ALL DOCTOR
+        case actionTypes.FETCH_ALL_DOCTORS_START: {
+            let copyState = { ...state };
+            copyState.isLoadingAllDoctors = true;
+            // console.log('fetch all doctor start: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.FETCH_ALL_DOCTORS_SUCCESS: {
+            let copyState = { ...state };
+            copyState.allDoctors = action.data;
+            copyState.isLoadingAllDoctors = false;
+            // console.log('fetch all doctor success: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.FETCH_ALL_DOCTORS_FAILED: {
+            let copyState = { ...state };
+            copyState.isLoadingAllDoctors = false;
+            copyState.allDoctors = [];
+            // console.log('fetch all doctor failed: ', copyState);
             return {
                 ...copyState,
             };
