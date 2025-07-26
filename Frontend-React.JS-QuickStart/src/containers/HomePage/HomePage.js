@@ -10,7 +10,7 @@ import HomeFooter from './HomeFooter';
 import './HomePage.scss'
 
 class HomePage extends Component {
-    
+
     render() {
         let settings = {
             infinite: false,
@@ -20,7 +20,7 @@ class HomePage extends Component {
         };
         return (
             <>
-                <HomeHeader />
+                <HomeHeader isShowBanner={true} />
                 <Specialty settings={settings} />
                 <MedicalFacility settings={settings} />
                 <OutStandingDoctoc settings={settings} />

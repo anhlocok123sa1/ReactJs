@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes';
-import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices } from '../../services/userService';
+import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices } from '../../services/userService';
 import { toast } from 'react-toastify';
 
 // GENDER
@@ -278,4 +278,32 @@ export const saveInfoDoctorSuccess = () => ({
 });
 export const saveInfoDoctorFailed = () => ({
     type: actionTypes.SAVE_INFO_DOCTOR_FAILED,
+});
+
+//GET DETAIL DOCTOR
+export const getDetailDoctorAction = (inputId) => { 
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.GET_DETAIL_DOCTOR_START });
+            let res = await getDetailsDoctorServices(inputId);
+            
+            if (res && res.errCode === 0) {
+                dispatch(getDetailDoctorSuccess(res.data));
+            } else {
+                dispatch(getDetailDoctorFailed());
+            }
+        } catch (e) {
+            dispatch(getDetailDoctorFailed());
+            console.log('get detail doctor error: ', e);
+        }
+    };
+}
+
+export const getDetailDoctorSuccess = (data) => ({
+    type: actionTypes.GET_DETAIL_DOCTOR_SUCCESS,
+    data: data
+});
+
+export const getDetailDoctorFailed = () => ({
+    type: actionTypes.GET_DETAIL_DOCTOR_FAILED
 });

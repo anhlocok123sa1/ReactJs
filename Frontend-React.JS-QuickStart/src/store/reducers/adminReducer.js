@@ -13,7 +13,8 @@ const initialState = {
     topDoctors: [],
     isLoadingAllDoctors: false,
     allDoctors:[],
-    
+    isLoadingDetailDoctor: false,
+    detailDoctor: {},
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -188,6 +189,32 @@ const adminReducer = (state = initialState, action) => {
             copyState.isLoadingAllDoctors = false;
             copyState.allDoctors = [];
             // console.log('fetch all doctor failed: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+        //GET DETAIL DOCTOR
+        case actionTypes.GET_DETAIL_DOCTOR_START: {
+            let copyState = { ...state };
+            copyState.isLoadingDetailDoctor = true;
+            // console.log('fetch detail doctor start: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.GET_DETAIL_DOCTOR_SUCCESS: {
+            let copyState = { ...state };
+            copyState.detailDoctor = action.data;
+            copyState.isLoadingDetailDoctor = false;
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.GET_DETAIL_DOCTOR_FAILED: {
+            let copyState = { ...state };
+            copyState.isLoadingDetailDoctor = false;
+            copyState.detailDoctor = {};
+            // console.log('fetch detail doctor failed: ', copyState);
             return {
                 ...copyState,
             };

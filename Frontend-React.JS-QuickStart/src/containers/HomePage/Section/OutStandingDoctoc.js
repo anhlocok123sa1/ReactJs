@@ -11,6 +11,8 @@ import { LANGUAGES } from '../../../utils/constant';
 import * as actions from '../../../store/actions';
 import { CommonUtils } from '../../../utils';
 import { FormattedMessage } from 'react-intl';
+import { withRouter } from 'react-router-dom';
+import { path } from '../../../utils/constant';
 
 class OutStandingDoctoc extends Component {
     constructor(props) {
@@ -31,6 +33,13 @@ class OutStandingDoctoc extends Component {
             });
         }
     }
+
+    handleViewDetailDoctor = (doctor) => {
+        const detailPath = path.DETAIL_DOCTOR.replace(':id', doctor.id);
+        this.props.history.push(detailPath);
+    }
+
+
     render() {
         let { arrTopDoctors } = this.state;
         let language = this.props.language
@@ -58,7 +67,7 @@ class OutStandingDoctoc extends Component {
                                     let name = `${language === LANGUAGES.VI ? item.positionData.valueVi + `, ` + item.lastName + ` ` + item.firstName : item.positionData.valueEn + `, ` + item.firstName + ` ` + item.lastName}`;
 
                                     return (
-                                        <div className='img-customize' key={index}>
+                                        <div className='img-customize' key={index} onClick={() => this.handleViewDetailDoctor(item)}>
                                             <div className='customize-border'>
                                                 <div className="outer-bg">
                                                     <img src={image} alt={item.name} />
@@ -95,4 +104,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(OutStandingDoctoc);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(OutStandingDoctoc));

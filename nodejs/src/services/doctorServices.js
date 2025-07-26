@@ -102,6 +102,7 @@ let saveInfoDoctor = (data) => {
 let getDetailDoctor = (doctorId) => {
     return new Promise(async (resolve, reject) => {
         try {
+            console.log('Check doctorId: ', doctorId);
             if (!doctorId) {
                 resolve({
                     errCode: 1,
@@ -111,7 +112,7 @@ let getDetailDoctor = (doctorId) => {
                 let doctor = await db.User.findOne({
                     where: { id: doctorId },
                     attributes: {
-                        exclude: ['password','image']
+                        exclude: ['password']
                     },
                     include: [
                         { model: db.Markdown, as: 'markdownData', attributes: ['contentMarkdown', 'contentHTML', 'description'] },
@@ -120,6 +121,12 @@ let getDetailDoctor = (doctorId) => {
                     raw: true,
                     nest: true
                 });
+                if (doctor && doctor.image) {
+                    doctor.image = Buffer.from(doctor.image, 'base64').toString('binary');
+                }
+                if (!doctor) {
+                    doctor = {};
+                }
                 resolve({
                     errCode: 0,
                     errMessage: 'OK',
