@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import * as actions from '../../../store/actions';
 import { connect } from 'react-redux';
 import { emitter } from '../../../utils/emitter';
-import { LANGUAGES } from '../../../utils';
+import { CRUD_ACTIONS, LANGUAGES } from '../../../utils';
 
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
@@ -25,6 +25,8 @@ class ManageDoctor extends Component {
             selectedDoctor: null,
             description: '',
             listDoctors: [],
+            detailDoctor: {},
+            hasOldData: false, // To check if we have old data to edit
         }
     }
 
@@ -44,6 +46,28 @@ class ManageDoctor extends Component {
             this.setState({
                 listDoctors: dataSelect
             });
+        }
+        if (prevProps.detailDoctor !== this.props.detailDoctor) {
+            console.log('Check detailDoctor from props:', this.props.detailDoctor);
+
+            let { detailDoctor } = this.props;
+            if (detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.contentMarkdown) {
+                this.setState({
+                    contentMarkdown: detailDoctor.markdownData.contentMarkdown,
+                    contentHTML: detailDoctor.markdownData.contentHTML,
+                    description: detailDoctor.markdownData.description,
+                    detailDoctor: detailDoctor,
+                    hasOldData: true // We have old data to edit
+                });
+            } else {
+                this.setState({
+                    contentMarkdown: '',
+                    contentHTML: '',
+                    description: '',
+                    detailDoctor: {},
+                    hasOldData: false // No old data to edit
+                });
+            }
         }
     }
 
@@ -71,22 +95,19 @@ class ManageDoctor extends Component {
     }
 
     handleSaveContentMarkdown = () => {
-        console.log('Check selected doctor', this.state);
-        let { contentMarkdown, contentHTML, selectedDoctor, description } = this.state;
+        let { contentMarkdown, contentHTML, selectedDoctor, description, hasOldData } = this.state;
         this.props.saveInfoDoctor({
             contentMarkdown: contentMarkdown,
             contentHTML: contentHTML,
             doctorId: selectedDoctor.value,
             description: description,
-            action: 'CREATE'
+            actions: hasOldData ? CRUD_ACTIONS.EDIT : CRUD_ACTIONS.CREATE
         });
     }
 
     handleChangeSelectedDoctor = (selectedDoctor) => {
-        this.setState(
-            { selectedDoctor }, 
-            () => console.log('Selected doctor changed:', this.state.selectedDoctor)
-        );
+        this.setState({ selectedDoctor });
+        this.props.getDetailDoctor(selectedDoctor.value);
     }
 
     handleOnChangeDescription = (event) => {
@@ -98,7 +119,8 @@ class ManageDoctor extends Component {
     }
 
     render() {
-        let { listDoctors, selectedDoctor, description } = this.state;
+        let { listDoctors, selectedDoctor, description, hasOldData } = this.state;
+
         return (
             <div className="manage-doctor-container">
                 <div className="manage-doctor-title">
@@ -129,13 +151,15 @@ class ManageDoctor extends Component {
                     <MdEditor
                         style={{ height: '500px' }}
                         renderHTML={text => mdParser.render(text)}
-                        onChange={this.handleEditorChange} />
+                        onChange={this.handleEditorChange}
+                        value={this.state.contentMarkdown}
+                    />
                 </div>
                 <button
                     onClick={() => this.handleSaveContentMarkdown()}
-                    className="btn btn-primary save-content-doctor"
-                >
-                    Save
+                    className={hasOldData ? "btn btn-warning" : "btn btn-primary"}
+                    style={{ marginTop: '20px' }}>
+                    {hasOldData ? <span>Cập nhật thông tin</span> : <span>Tạo thông tin</span>}
                 </button>
             </div>
         );
@@ -147,14 +171,16 @@ const mapStateToProps = state => {
     return {
         allDoctors: state.admin.allDoctors,
         isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language
+        language: state.app.language,
+        detailDoctor: state.admin.detailDoctor,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         fetchAllDoctors: () => dispatch(actions.fetchAllDoctors()),
-        saveInfoDoctor: (data) => dispatch(actions.saveInfoDoctorAction(data))
+        saveInfoDoctor: (data) => dispatch(actions.saveInfoDoctorAction(data)),
+        getDetailDoctor: (data) => dispatch(actions.getDetailDoctorAction(data))
     };
 };
 

@@ -5,7 +5,7 @@ let getTopDoctorHome = (limit) => {
         try {
             let doctors = await db.User.findAll({
                 limit: limit,
-                where: { roleId: 'R2' }, 
+                where: { roleId: 'R2' },
                 order: [['createdAt', 'DESC']],
                 attributes: {
                     exclude: ['password']
@@ -33,9 +33,9 @@ let getAllDoctor = () => {
     return new Promise(async (resolve, reject) => {
         try {
             let doctors = await db.User.findAll({
-                where: { roleId: 'R2' }, 
+                where: { roleId: 'R2' },
                 attributes: {
-                    exclude: ['password','image']
+                    exclude: ['password', 'image']
                 },
                 include: [
                     { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
@@ -59,22 +59,20 @@ let getAllDoctor = () => {
 let saveInfoDoctor = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.contentMarkdown || !data.contentHTML || !data.action) {
-                console.log(data);
-                
+            if (!data.contentMarkdown || !data.contentHTML || !data.actions || !data.doctorId) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing required parameters'
                 });
             } else {
-                if (data.action === 'CREATE') {
+                if (data.actions === "CREATE") {
                     await db.Markdown.create({
                         contentMarkdown: data.contentMarkdown,
                         contentHTML: data.contentHTML,
                         description: data.description,
                         doctorId: data.doctorId
                     });
-                } else if (data.action === 'EDIT') {
+                } else if (data.actions === 'EDIT') {
                     let doctorMarkdown = await db.Markdown.findOne({
                         where: { doctorId: data.doctorId },
                         raw: false
@@ -87,7 +85,6 @@ let saveInfoDoctor = (data) => {
                         await doctorMarkdown.save();
                     }
                 }
-
                 resolve({
                     errCode: 0,
                     errMessage: 'Save info doctor successfully'
@@ -102,7 +99,6 @@ let saveInfoDoctor = (data) => {
 let getDetailDoctor = (doctorId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log('Check doctorId: ', doctorId);
             if (!doctorId) {
                 resolve({
                     errCode: 1,

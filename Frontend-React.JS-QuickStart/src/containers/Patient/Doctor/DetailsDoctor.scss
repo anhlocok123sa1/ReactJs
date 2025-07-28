@@ -1,11 +1,10 @@
 .doctoc-detail-container {
     height: 500px;
-    margin: 0 100px;
-    border: 1px solid red;
 
     .intro-doctor {
+        padding: 20px 110px;
         display: flex;
-        border: 1px solid gray;
+        border-bottom: 1px solid #ccc;
 
         .content-left {
             width : 20%;
@@ -18,7 +17,6 @@
 
         .content-right {
             width         : 80%;
-            border        : 1px solid green;
             display       : flex;
             flex-direction: column;
             padding-left  : 10px;
@@ -31,9 +29,25 @@
 
             .down {
                 padding-top: 10px;
-                font-size  : 16px;
+                font-size  : 14px;
                 font-weight: 400;
+                color: #555;
             }
+        }
+    }
+
+    .detail-doctor {
+        padding: 20px 110px;
+        background-color: #f9f9f9;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ccc;
+
+        h3{
+            font-size: 16px;
+        }
+        
+        img {
+            width: 100%;
         }
     }
 }
