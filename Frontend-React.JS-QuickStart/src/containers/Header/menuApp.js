@@ -10,9 +10,12 @@ export const adminMenu = [
             {
                 name: 'menu.admin.manage-doctor', link: '/system/manage-doctor'
             },
-            {
-                name: 'menu.admin.manage-admin', link: '/system/user-admin'
-            },
+            // {
+            //     name: 'menu.admin.manage-admin', link: '/system/user-admin'
+            // },
+            { //quản lý kế hoạch khám bệnh
+                name: 'menu.doctor.manage-schedule', link: '/doctor/manage-schedule'
+            }
         ]
     },
     { //quản lý phòng khám
@@ -36,4 +39,16 @@ export const adminMenu = [
             },
         ]
     },
+];
+
+export const doctorMenu = [
+    {
+        name: 'menu.doctor.manage',
+        menus: [
+            { //quản lý kế hoạch khám bệnh
+                name: 'menu.doctor.manage-schedule', link: '/doctor/manage-schedule'
+            },
+        ]
+    }
+
 ];
