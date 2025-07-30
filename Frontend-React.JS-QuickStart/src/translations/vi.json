@@ -57,12 +57,12 @@
     },
     "doctor": {
       "manage": "Quản lý",
-      "manage-schedule":"Quản lý kế hoạch khám bệnh"
+      "manage-schedule": "Quản lý kế hoạch khám bệnh"
     }
   },
   "manage-user": {
     "add": "Thêm mới người dùng",
-    "email":"Email",
+    "email": "Email",
     "password": "Mật khẩu",
     "first-name": "Tên",
     "last-name": "Họ",
@@ -82,5 +82,12 @@
     "outstanding-specialty": "Chuyên khoa nổi bật",
     "outstanding-health-facility": "Cơ sở y tế nổi bật",
     "handbook": "Cẩm nang sức khỏe"
+  },
+  "manage-schedule": {
+    "title": "Quản lý lịch khám bệnh",
+    "select-doctor": "Chọn bác sĩ",
+    "select-date": "Chọn ngày",
+    "select-time": "Chọn giờ",
+    "save-schedule": "Lưu lịch khám"
   }
 }

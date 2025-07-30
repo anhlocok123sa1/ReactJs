@@ -36,7 +36,7 @@ class Login extends Component {
         })
         try {
             await handleLoginApi(this.state.username, this.state.password).then(res => {
-                if( res && res.errCode !== 0) {
+                if (res && res.errCode !== 0) {
                     this.setState({
                         errMessage: res.message
                     })
@@ -45,7 +45,7 @@ class Login extends Component {
                     console.log('Login success');
                 }
             });
-            
+
         } catch (e) {
             if (e.response) {
                 if (e.response.data) {
@@ -63,6 +63,12 @@ class Login extends Component {
         })
     }
 
+    handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            this.handleLogin();
+        }
+    }
+
     render() {
         return (
             <div className='login-background'>
@@ -76,7 +82,14 @@ class Login extends Component {
                         <div className="col-12 form-group login-input">
                             <label>Password: </label>
                             <div className="custom-input-password">
-                                <input type={this.state.isShowPassword ? 'text' : 'password'} className='form-control' placeholder='Enter your password' value={this.state.password} onChange={(event => this.handleOnChangePassword(event))} />
+                                <input
+                                    type={this.state.isShowPassword ? 'text' : 'password'}
+                                    className='form-control'
+                                    placeholder='Enter your password'
+                                    value={this.state.password}
+                                    onChange={(event => this.handleOnChangePassword(event))}
+                                    onKeyDown={(e) => this.handleKeyDown(e)}
+                                />
                                 <span
                                     onClick={() => { this.handleShowHidePassword() }}>
                                     <i className={this.state.isShowPassword ? 'far fa-eye' : 'far fa-eye-slash'}></i>

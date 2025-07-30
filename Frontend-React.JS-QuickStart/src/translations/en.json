@@ -82,5 +82,12 @@
     "outstanding-specialty": "Outstanding Specialties",
     "outstanding-health-facility": "Outstanding Health Facilities",
     "handbook": "Health Handbook"
+  },
+  "manage-schedule": {
+    "title": "Manage Doctor's Schedule",
+    "select-doctor": "Select a doctor",
+    "select-date": "Select a date",
+    "select-time": "Select a time",
+    "save-schedule": "Save schedule"
   }
 }

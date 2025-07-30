@@ -15,6 +15,8 @@ const initialState = {
     allDoctors:[],
     isLoadingDetailDoctor: false,
     detailDoctor: {},
+    isLoadingAllCodeScheduleTime: false,
+    allCodeScheduleTime: [],
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -215,6 +217,33 @@ const adminReducer = (state = initialState, action) => {
             copyState.isLoadingDetailDoctor = false;
             copyState.detailDoctor = {};
             // console.log('fetch detail doctor failed: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+        //GET ALL CODE SCHEDULE TIME
+        case actionTypes.FETCH_ALL_CODE_SCHEDULE_TIME_START: {
+            let copyState = { ...state };
+            copyState.isLoadingAllCodeScheduleTime = true;
+            // console.log('fetch all code schedule time start: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.FETCH_ALL_CODE_SCHEDULE_TIME_SUCCESS: {
+            let copyState = { ...state };
+            copyState.allCodeScheduleTime = action.data;
+            copyState.isLoadingAllCodeScheduleTime = false;
+            // console.log('fetch all code schedule time success: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.FETCH_ALL_CODE_SCHEDULE_TIME_FAILED: {
+            let copyState = { ...state };
+            copyState.isLoadingAllCodeScheduleTime = false;
+            copyState.allCodeScheduleTime = [];
+            // console.log('fetch all code schedule time failed: ', copyState);
             return {
                 ...copyState,
             };
