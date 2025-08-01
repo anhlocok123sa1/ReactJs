@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes';
-import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices } from '../../services/userService';
+import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices } from '../../services/userService';
 import { toast } from 'react-toastify';
 
 // GENDER
@@ -331,4 +331,30 @@ export const fetchAllCodeScheduleTimeSuccess = (data) => ({
 });
 export const fetchAllCodeScheduleTimeFailed = () => ({
     type: actionTypes.FETCH_ALL_CODE_SCHEDULE_TIME_FAILED
+});
+
+//SAVE BULK SCHEDULE DOCTOR
+export const saveBulkScheduleDoctor = (data) => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.SAVE_BULK_SCHEDULE_DOCTOR_START });
+            let res = await bulkCreateScheduleServices(data);
+            if (res && res.errCode === 0) {
+                dispatch(saveBulkScheduleDoctorSuccess());
+                toast.success("Save bulk schedule doctor success!");
+            } else {
+                dispatch(saveBulkScheduleDoctorFailed());
+                toast.error("Save bulk schedule doctor failed!");
+            }
+        } catch (e) {
+            dispatch(saveBulkScheduleDoctorFailed());
+            console.log('save bulk schedule doctor error: ', e);
+        }
+    };
+}
+export const saveBulkScheduleDoctorSuccess = () => ({
+    type: actionTypes.SAVE_BULK_SCHEDULE_DOCTOR_SUCCESS,
+});
+export const saveBulkScheduleDoctorFailed = () => ({
+    type: actionTypes.SAVE_BULK_SCHEDULE_DOCTOR_FAILED,
 });

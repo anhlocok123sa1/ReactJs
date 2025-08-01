@@ -16,7 +16,7 @@ class ManageSchedule extends Component {
         this.state = {
             selectedDoctor: null,
             listDoctors: [],
-            selectedDate: new Date(),
+            selectedDate: new Date().getTime(),
             rangeTime: [],
             selectedTime: []
         };
@@ -91,7 +91,6 @@ class ManageSchedule extends Component {
                 rangeTime: newRangeTime,
                 selectedTime: selectedTime
             });
-
         }
 
 
@@ -112,23 +111,33 @@ class ManageSchedule extends Component {
             return;
         }
 
-        let formattedDate = moment(selectedDate).format('DD/MM/YYYY');
+        let formattedDate = new Date(selectedDate).getTime();
         let scheduleData = {};
 
+        // if (selectedTime && selectedTime.length > 0) {
+        //     scheduleData = selectedTime.map(item => {
+        //         return {
+        //             doctorId: selectedDoctor.value,
+        //             date: formattedDate,
+        //             time: item.keyMap
+        //         };
+        //     });
+        // }
         if (selectedTime && selectedTime.length > 0) {
-            scheduleData = selectedTime.map(item => {
-                return {
-                    doctorId: selectedDoctor.value,
-                    date: formattedDate,
-                    time: item.keyMap
-                };
-            });
-            // this.props.saveBulkScheduleDoctor(scheduleData);
+            scheduleData = {
+                doctorId: selectedDoctor.value,
+                date: formattedDate,
+                time: selectedTime.map(item => ({
+                    timeType: item.keyMap,
+                    maxNumber: item.maxNumber || 10 // nếu bạn có trường này trong item
+                }))
+            }
         }
+        this.props.saveBulkScheduleDoctor(scheduleData);
 
         console.log("Schedule Data: ", scheduleData);
-        
-        
+
+
     }
     render() {
         let { listDoctors, selectedDoctor, selectedDate, rangeTime } = this.state;
@@ -199,7 +208,7 @@ const mapStateToProps = state => {
         allDoctors: state.admin.allDoctors,
         language: state.app.language,
         allCodeScheduleTime: state.admin.allCodeScheduleTime,
-
+        bulkScheduleDoctor: state.admin.bulkScheduleDoctor,
     };
 };
 
@@ -207,6 +216,7 @@ const mapDispatchToProps = dispatch => {
     return {
         fetchAllDoctors: () => dispatch(actions.fetchAllDoctors()),
         fetchAllCodeScheduleTime: () => dispatch(actions.fetchAllCodeScheduleTime()),
+        saveBulkScheduleDoctor: (data) => dispatch(actions.saveBulkScheduleDoctor(data)),
     };
 };
 

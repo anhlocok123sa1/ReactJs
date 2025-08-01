@@ -1,4 +1,8 @@
 import db from "../models"
+require('dotenv').config();
+import _ from 'lodash';
+
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE || 10;
 
 let getTopDoctorHome = (limit) => {
     return new Promise(async (resolve, reject) => {
@@ -135,9 +139,108 @@ let getDetailDoctor = (doctorId) => {
     })
 }
 
+let bulkCreateSchedule = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.doctorId || !data.date || !Array.isArray(data.time)) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: 'Missing or invalid required parameters'
+                });
+            }
+
+            // Lấy lịch đã tồn tại
+            let existingSchedules = await db.Schedule.findAll({
+                where: {
+                    doctorId: data.doctorId,
+                    date: data.date
+                },
+                attributes: ['id', 'timeType', 'date', 'doctorId', 'maxNumber', 'currentNumber'],
+                raw: true
+            });
+            
+            if(existingSchedules && existingSchedules.length > 0 ) {
+                existingSchedules = existingSchedules.map(item => {
+                    item.date = new Date(item.date).getTime();
+                    return item;
+                })
+            }
+            console.log("Check existingSchedules: ", existingSchedules);
+
+            // Format dữ liệu mới
+            let formattedNew = data.time.map(item => ({
+                doctorId: data.doctorId,
+                date: data.date,
+                timeType: item.timeType || item,
+                maxNumber: item.maxNumber || 10
+            }));
+            console.log("Check formattedNew: ", formattedNew);
+            
+
+            // Danh sách cần insert và update
+            let schedulesToCreate = [];
+            let schedulesToUpdate = [];
+
+            for (let schedule of formattedNew) {
+                let match = existingSchedules.find(existing =>
+                    existing.timeType === schedule.timeType &&
+                    existing.date === schedule.date &&
+                    existing.doctorId === schedule.doctorId
+                );
+                
+
+                if (!match) {
+                    // Chưa tồn tại → tạo mới
+                    schedulesToCreate.push({
+                        ...schedule,
+                        currentNumber: 1
+                    });
+                } else {
+                    if (match.currentNumber >= match.maxNumber) {
+                        return resolve({
+                            errCode: 2,
+                            errMessage: `Time slot '${schedule.timeType}' is fully booked`
+                        });
+                    } else {
+                        // Tăng currentNumber lên 1
+                        schedulesToUpdate.push({
+                            id: match.id,
+                            currentNumber: match.currentNumber + 1
+                        });
+                    }
+                }
+            }
+
+            // Tạo mới
+            if (schedulesToCreate.length > 0) {
+                await db.Schedule.bulkCreate(schedulesToCreate);
+            }
+
+            // Cập nhật currentNumber
+            for (let item of schedulesToUpdate) {
+                await db.Schedule.update(
+                    { currentNumber: item.currentNumber },
+                    { where: { id: item.id } }
+                );
+            }
+
+            return resolve({    
+                errCode: 0,
+                errMessage: 'Create/update schedule successfully'
+            });
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
     saveInfoDoctor: saveInfoDoctor,
-    getDetailDoctor: getDetailDoctor
+    getDetailDoctor: getDetailDoctor,
+    bulkCreateSchedule: bulkCreateSchedule
 }

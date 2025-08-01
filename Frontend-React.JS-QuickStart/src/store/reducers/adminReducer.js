@@ -17,6 +17,8 @@ const initialState = {
     detailDoctor: {},
     isLoadingAllCodeScheduleTime: false,
     allCodeScheduleTime: [],
+    isLoadingBulkScheduleDoctor: false,
+    bulkScheduleDoctor: [],
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -244,6 +246,34 @@ const adminReducer = (state = initialState, action) => {
             copyState.isLoadingAllCodeScheduleTime = false;
             copyState.allCodeScheduleTime = [];
             // console.log('fetch all code schedule time failed: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+
+        //SAVE BULK SCHEDULE DOCTOR
+        case actionTypes.SAVE_BULK_SCHEDULE_DOCTOR_START: {
+            let copyState = { ...state };
+            copyState.isLoadingBulkScheduleDoctor = true;
+            // console.log('save bulk schedule doctor start: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.SAVE_BULK_SCHEDULE_DOCTOR_SUCCESS: {
+            let copyState = { ...state };
+            copyState.isLoadingBulkScheduleDoctor = false;
+            copyState.bulkScheduleDoctor = action.data;
+            // console.log('save bulk schedule doctor success: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.SAVE_BULK_SCHEDULE_DOCTOR_FAILED: {
+            let copyState = { ...state };
+            copyState.isLoadingBulkScheduleDoctor = false;
+            copyState.bulkScheduleDoctor = [];
+            // console.log('save bulk schedule doctor failed: ', copyState);
             return {
                 ...copyState,
             };
