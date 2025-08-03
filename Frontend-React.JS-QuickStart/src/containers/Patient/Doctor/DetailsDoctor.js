@@ -5,6 +5,7 @@ import HomeHeader from '../../HomePage/HomeHeader';
 import './DetailsDoctor.scss';
 import * as actions from '../../../store/actions';
 import { LANGUAGES } from '../../../utils';
+import DoctorSchedule from './DoctorSchedule';
 
 class DetailsDoctor extends Component {
     constructor(props) {
@@ -29,7 +30,7 @@ class DetailsDoctor extends Component {
         const prevDoctorId = prevProps.match.params.id;
         const currentDoctorId = this.props.match.params.id;
         if (prevDoctorId !== currentDoctorId) {
-            console.log('Doctor ID changed:', currentDoctorId);
+            // console.log('Doctor ID changed:', currentDoctorId);
             // Fetch new doctor details logic can be added here
         }
         if (prevProps.detailDoctor !== this.props.detailDoctor) {
@@ -44,12 +45,14 @@ class DetailsDoctor extends Component {
         // You can access the doctor details from props or state
         let { detailDoctor } = this.state;
         let { language } = this.props;
-        console.log('Detail Doctor from props:', detailDoctor);
+        // console.log('Detail Doctor from props:', detailDoctor);
         let nameVi = '', nameEn = '';
         if (detailDoctor && detailDoctor.positionData) {
             nameVi = `${detailDoctor.positionData.valueVi}, ${detailDoctor.lastName} ${detailDoctor.firstName}`;
             nameEn = `${detailDoctor.positionData.valueEn}, ${detailDoctor.firstName} ${detailDoctor.lastName}`;
         }
+
+        let doctorId = this.props.match.params.id;
 
         return (
             <React.Fragment>
@@ -73,7 +76,14 @@ class DetailsDoctor extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="schedule-doctor"></div>
+                    <div className="schedule-doctor">
+                        <div className="content-left">
+                            <DoctorSchedule
+                                doctorId = {doctorId}
+                            />
+                        </div>
+                        <div className="content-right"></div>
+                    </div>
                     <div className="detail-doctor">
                         {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.contentHTML &&
                             <div dangerouslySetInnerHTML={{ __html: detailDoctor.markdownData.contentHTML }}></div>

@@ -1,3 +1,4 @@
+import { where } from "sequelize";
 import db from "../models"
 require('dotenv').config();
 import _ from 'lodash';
@@ -235,6 +236,38 @@ let bulkCreateSchedule = (data) => {
     });
 };
 
+let getDoctorSchedule = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            console.log("Check data: ", data);
+            
+            if(!data.doctorId || !data.date) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: 'Missing or invalid required parameters'
+                });
+            } else {
+                let formattedDate = Number(data.date);
+                let doctorSchedule = await db.Schedule.findAll({
+                    where: {
+                        doctorId: data.doctorId,
+                        date: formattedDate
+                    },
+                    attributes: ['currentNumber','maxNumber','date','timeType','doctorId']
+                })
+                
+                resolve({
+                    errCode: 0,
+                    errMessage: 'OK',
+                    data: doctorSchedule
+                });
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 
 
 module.exports = {
@@ -242,5 +275,6 @@ module.exports = {
     getAllDoctor: getAllDoctor,
     saveInfoDoctor: saveInfoDoctor,
     getDetailDoctor: getDetailDoctor,
-    bulkCreateSchedule: bulkCreateSchedule
+    bulkCreateSchedule: bulkCreateSchedule,
+    getDoctorSchedule: getDoctorSchedule
 }

@@ -4,15 +4,14 @@
     .intro-doctor {
         padding: 20px 110px;
         display: flex;
-        border-bottom: 1px solid #ccc;
 
         .content-left {
-            width : 20%;
-            background: center center / cover no-repeat;
-            width: 120px;
-            height: 120px;
+            width        : 20%;
+            background   : center center / cover no-repeat;
+            width        : 120px;
+            height       : 120px;
             border-radius: 50%;
-            margin: 10px 20px;
+            margin       : 10px 20px;
         }
 
         .content-right {
@@ -31,21 +30,37 @@
                 padding-top: 10px;
                 font-size  : 14px;
                 font-weight: 400;
-                color: #555;
+                color      : #555;
             }
         }
     }
 
-    .detail-doctor {
-        padding: 20px 110px;
-        background-color: #f9f9f9;
-        margin-bottom: 20px;
-        border-bottom: 1px solid #ccc;
+    .schedule-doctor {
+        margin: 0 100px;
+        display: flex;
+        height: 200px;
+        border: 1px solid red;
 
-        h3{
+        .content-left {
+            width: 50%;
+        }
+        .content-right {
+            width: 50%;
+        }
+    }
+
+    .detail-doctor {
+        padding         : 20px 110px;
+        background-color: #f9f9f9;
+        margin-bottom   : 20px;
+        border-bottom   : 1px solid #ccc;
+
+        border-top: 1px solid #ccc;
+
+        h3 {
             font-size: 16px;
         }
-        
+
         img {
             width: 100%;
         }

@@ -43,18 +43,39 @@ class ManageSchedule extends Component {
             if (data && data.length > 0) {
                 data = data.map(item => ({ ...item, isSelected: false }));
             }
-            console.log("data", data);
-
-
             this.setState({
-                rangeTime: this.props.allCodeScheduleTime
+                rangeTime: data
             });
+        }
+        if (prevProps.doctorSchedule !== this.props.doctorSchedule) {
+            let { doctorSchedule } = this.props;
+            let { rangeTime } = this.state;
+
+            if (doctorSchedule && doctorSchedule.data && rangeTime && rangeTime.length > 0) {
+                let updatedRangeTime = rangeTime.map(time => {
+                    let scheduleItem = doctorSchedule.data.find(item => item.timeType === time.keyMap);
+                    return {
+                        ...time,
+                        isDisabled: scheduleItem ? scheduleItem.currentNumber >= scheduleItem.maxNumber : false
+                    };
+                });
+
+                this.setState({
+                    rangeTime: updatedRangeTime
+                });
+            }
         }
     }
     handleChangeSelectedDoctor = (selectedDoctor) => {
-        this.setState({ selectedDoctor });
-        // this.props.getDetailDoctor(selectedDoctor.value);
-
+        this.setState({ selectedDoctor }, () => {
+            let { selectedDate } = this.state;
+            if (selectedDoctor && selectedDate) {
+                this.props.getDoctorSchedule({
+                    doctorId: selectedDoctor.value,
+                    date: new Date(selectedDate).getTime()
+                });
+            }
+        });
     }
     buildDataInputSelect = (inputData) => {
         let result = [];
@@ -73,10 +94,16 @@ class ManageSchedule extends Component {
     }
 
     handleChangeDate = (date) => {
-        this.setState({
-            selectedDate: date[0]
+        this.setState({ selectedDate: date[0] }, () => {
+            const { selectedDoctor, selectedDate } = this.state;
+            if (selectedDoctor && selectedDate) {
+                this.props.getDoctorSchedule({
+                    doctorId: selectedDoctor.value,
+                    date: new Date(selectedDate).getTime()
+                });
+            }
         });
-    }
+    };
     handleClickBtnTime = (item) => {
         let { rangeTime, selectedTime } = this.state;
         if (rangeTime && rangeTime.length > 0) {
@@ -97,48 +124,58 @@ class ManageSchedule extends Component {
     };
 
     handleSaveSchedule = () => {
-        let { selectedDoctor, selectedDate, selectedTime } = this.state;
+        const { selectedDoctor, selectedDate, selectedTime } = this.state;
+
+        // Validate
         if (!selectedDoctor) {
-            toast.warning("Please select a doctor");
+            toast.warning("Vui lòng chọn bác sĩ");
             return;
         }
         if (!selectedDate) {
-            toast.warning("Please select a date");
+            toast.warning("Vui lòng chọn ngày");
             return;
         }
         if (selectedTime.length === 0) {
-            toast.warning("Please select a time");
+            toast.warning("Vui lòng chọn ít nhất một khung giờ");
             return;
         }
 
-        let formattedDate = new Date(selectedDate).getTime();
-        let scheduleData = {};
+        // Prepare data
+        const scheduleData = {
+            doctorId: selectedDoctor.value,
+            date: new Date(selectedDate).getTime(),
+            time: selectedTime.map(item => ({
+                timeType: item.keyMap,
+                maxNumber: item.maxNumber || 10
+            }))
+        };
 
-        // if (selectedTime && selectedTime.length > 0) {
-        //     scheduleData = selectedTime.map(item => {
-        //         return {
-        //             doctorId: selectedDoctor.value,
-        //             date: formattedDate,
-        //             time: item.keyMap
-        //         };
-        //     });
-        // }
-        if (selectedTime && selectedTime.length > 0) {
-            scheduleData = {
-                doctorId: selectedDoctor.value,
-                date: formattedDate,
-                time: selectedTime.map(item => ({
-                    timeType: item.keyMap,
-                    maxNumber: item.maxNumber || 10 // nếu bạn có trường này trong item
-                }))
-            }
-        }
-        this.props.saveBulkScheduleDoctor(scheduleData);
+        // Dispatch action và reset state khi thành công
+        this.props.saveBulkScheduleDoctor(scheduleData)
+            .then(() => {
+                // Reset selected time slots
+                const resetRangeTime = this.state.rangeTime.map(item => ({
+                    ...item,
+                    isSelected: false
+                }));
 
-        console.log("Schedule Data: ", scheduleData);
+                this.setState({
+                    selectedTime: [],
+                    rangeTime: resetRangeTime
+                });
 
-
-    }
+                // Fetch lại lịch trình nếu cần
+                if (selectedDoctor && selectedDate) {
+                    this.props.getDoctorSchedule({
+                        doctorId: selectedDoctor.value,
+                        date: new Date(selectedDate).getTime()
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi khi lưu lịch trình:", error);
+            });
+    };
     render() {
         let { listDoctors, selectedDoctor, selectedDate, rangeTime } = this.state;
         let { language } = this.props;
@@ -180,8 +217,10 @@ class ManageSchedule extends Component {
                                         key={index}
                                         className={`${language === LANGUAGES.VI ? 'btn btn-schedule vi' : 'btn btn-schedule en'} ${item.isSelected ? 'active' : ''}`}
                                         onClick={() => this.handleClickBtnTime(item)}
+                                        disabled={item.isDisabled}
                                     >
                                         {language === LANGUAGES.VI ? item.valueVi : item.valueEn}
+                                        {item.isDisabled && <span className="slot-full"> (Full)</span>}
                                     </button>
                                 );
                             }
@@ -209,6 +248,7 @@ const mapStateToProps = state => {
         language: state.app.language,
         allCodeScheduleTime: state.admin.allCodeScheduleTime,
         bulkScheduleDoctor: state.admin.bulkScheduleDoctor,
+        doctorSchedule: state.admin.doctorSchedule
     };
 };
 
@@ -217,6 +257,7 @@ const mapDispatchToProps = dispatch => {
         fetchAllDoctors: () => dispatch(actions.fetchAllDoctors()),
         fetchAllCodeScheduleTime: () => dispatch(actions.fetchAllCodeScheduleTime()),
         saveBulkScheduleDoctor: (data) => dispatch(actions.saveBulkScheduleDoctor(data)),
+        getDoctorSchedule: (data) => dispatch(actions.getDoctorSchedule(data))
     };
 };
 

@@ -45,4 +45,13 @@ const bulkCreateScheduleServices = (data) => {
     return axios.post('/api/bulk-create-schedule', data);
 }
 
-export { handleLoginApi, getAllUsers, createNewUserServices, deleteUserServices, editUserServices, getAllCodeServices, getTopDoctorHomeServices , getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices };
+const getDoctorScheduleServices = (doctorId, date) => {
+    return axios.get(`/api/get-doctor-schedule`, {
+        params: {
+            doctorId,
+            date
+        }
+    });
+}
+
+export { handleLoginApi, getAllUsers, createNewUserServices, deleteUserServices, editUserServices, getAllCodeServices, getTopDoctorHomeServices , getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices };
