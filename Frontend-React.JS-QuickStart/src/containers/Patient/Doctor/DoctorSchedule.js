@@ -14,6 +14,7 @@ class DoctorSchedule extends Component {
         this.state = {
             allDays: [],
             selectedDay: null,
+            allAvalableTime: [],
         };
     }
 
@@ -38,6 +39,15 @@ class DoctorSchedule extends Component {
                 selectedDay: allDays[0]
             });
         }
+        if (prevProps.doctorSchedule !== this.props.doctorSchedule) {
+            this.setState({
+                allAvalableTime: this.props.doctorSchedule
+            })
+        }
+    }
+
+    capitalizeFirstLetter = (val) => {
+        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     }
 
     getAllDays = (language) => {
@@ -46,7 +56,8 @@ class DoctorSchedule extends Component {
             let object = {};
             let date = moment(new Date()).add(i, 'days');
             if (language === LANGUAGES.VI) {
-                object.label = date.format('dddd - DD/MM');
+                let labelVi = date.format('dddd - DD/MM');
+                object.label = this.capitalizeFirstLetter(labelVi);
             } else {
                 object.label = date.locale('en').format('dddd - DD/MM');
             }
@@ -67,20 +78,29 @@ class DoctorSchedule extends Component {
     }
 
     render() {
-        const { allDays, selectedDay } = this.state;
+        let { allDays, selectedDay, allAvalableTime } = this.state;
+        let { language } = this.props
+        let customStyles = {
+            control: (provided, state) => (
+                console.log("Check state select: ", provided),
 
-        const customStyles = {
-            control: (provided, state) => ({
-                ...provided,
-                width: 200,
-                minHeight: 40,
-                borderRadius: 8,
-                borderColor: state.isFocused ? '#2684FF' : '#ccc',
-                boxShadow: state.isFocused ? '0 0 0 1px #2684FF' : 'none',
-                '&:hover': {
-                    borderColor: '#2684FF'
-                },
-            }),
+                {
+                    ...provided,
+                    width: 200,
+                    borderBottom: '1px solid #2684FF',
+                    '&:hover': {
+                        borderBottom: '1px solid #2684FF'
+                    },
+                    borderTop: "none",
+                    borderLeft: 'none',
+                    borderRight: 'none',
+                    cursor: 'pointer',
+                    color: '#2684FF',
+                    fontWeight: '600',
+                    fontColor: '#2684FF',
+                    boxShadow:'none',
+                    borderRadius:'none',
+                }),
             menu: (provided) => ({
                 ...provided,
                 width: 200,
@@ -126,7 +146,29 @@ class DoctorSchedule extends Component {
                         />
                     }
                 </div>
-                <div className="all-available-time"></div>
+                <div className="all-available-time">
+                    <div className="text-calendar">
+                        <span><i className="fas fa-calendar-alt"></i>Lịch khám</span>
+                    </div>
+                    <div className="time-content">
+                        {allAvalableTime && allAvalableTime.length > 0 ?
+                            allAvalableTime.map((item, index) => {
+                                console.log("check item", item);
+
+                                return (
+                                    <button
+                                        className={language === LANGUAGES.VI ? 'btn btn-schedule vi' : 'btn btn-schedule en'}
+                                        key={index}
+                                    >
+                                        {language === LANGUAGES.VI ? item.timeTypeData.valueVi : item.timeTypeData.valueEn}
+                                    </button>
+                                )
+                            })
+                            :
+                            <div className="">Không có lịch hẹn trong thời gian này, vui lòng chọn thời gian khác</div>
+                        }
+                    </div>
+                </div>
             </div>
         );
     }

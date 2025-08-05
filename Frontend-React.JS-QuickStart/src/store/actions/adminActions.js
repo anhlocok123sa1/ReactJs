@@ -346,7 +346,6 @@ export const saveBulkScheduleDoctor = (data) => {
                 dispatch(saveBulkScheduleDoctorFailed());
                 toast.error("Save bulk schedule doctor failed!");
             }
-            return res.data;
         } catch (e) {
             dispatch(saveBulkScheduleDoctorFailed());
             console.log('save bulk schedule doctor error: ', e);
@@ -368,7 +367,7 @@ export const getDoctorSchedule = (data) => {
             let res = await getDoctorScheduleServices(data.doctorId, data.date);
             // console.log("Check response from action: ", res);
             if (res && res.errCode === 0) {
-                dispatch(getDoctorScheduleSuccess(res));
+                dispatch(getDoctorScheduleSuccess(res.data));
                 // toast.success("Save bulk schedule doctor success!");
             } else {
                 dispatch(getDoctorScheduleFailed());

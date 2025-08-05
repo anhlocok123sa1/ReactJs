@@ -1,7 +1,7 @@
 import { where } from "sequelize";
 import db from "../models"
 require('dotenv').config();
-import _ from 'lodash';
+import _, { includes } from 'lodash';
 
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE || 10;
 
@@ -150,84 +150,36 @@ let bulkCreateSchedule = (data) => {
                 });
             }
 
-            // Lấy lịch đã tồn tại
-            let existingSchedules = await db.Schedule.findAll({
+            let schedule = data.time.map(item => ({
+                doctorId: data.doctorId,
+                date: data.date,
+                timeType: item.timeType,
+                maxNumber: item.maxNumber || MAX_NUMBER_SCHEDULE
+            }));
+
+            // Get all existing data
+            let existing = await db.Schedule.findAll({
                 where: {
                     doctorId: data.doctorId,
                     date: data.date
                 },
-                attributes: ['id', 'timeType', 'date', 'doctorId', 'maxNumber', 'currentNumber'],
+                attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
                 raw: true
             });
-            
-            if(existingSchedules && existingSchedules.length > 0 ) {
-                existingSchedules = existingSchedules.map(item => {
-                    item.date = new Date(item.date).getTime();
-                    return item;
-                })
-            }
-            console.log("Check existingSchedules: ", existingSchedules);
 
-            // Format dữ liệu mới
-            let formattedNew = data.time.map(item => ({
-                doctorId: data.doctorId,
-                date: data.date,
-                timeType: item.timeType || item,
-                maxNumber: item.maxNumber || 10
-            }));
-            console.log("Check formattedNew: ", formattedNew);
-            
+            // Compare difference
+            let toCreate = _.differenceWith(schedule, existing, (a, b) => {
+                return a.timeType === b.timeType && a.date === b.date;
+            });
 
-            // Danh sách cần insert và update
-            let schedulesToCreate = [];
-            let schedulesToUpdate = [];
-
-            for (let schedule of formattedNew) {
-                let match = existingSchedules.find(existing =>
-                    existing.timeType === schedule.timeType &&
-                    existing.date === schedule.date &&
-                    existing.doctorId === schedule.doctorId
-                );
-                
-
-                if (!match) {
-                    // Chưa tồn tại → tạo mới
-                    schedulesToCreate.push({
-                        ...schedule,
-                        currentNumber: 1
-                    });
-                } else {
-                    if (match.currentNumber >= match.maxNumber) {
-                        return resolve({
-                            errCode: 2,
-                            errMessage: `Time slot '${schedule.timeType}' is fully booked`
-                        });
-                    } else {
-                        // Tăng currentNumber lên 1
-                        schedulesToUpdate.push({
-                            id: match.id,
-                            currentNumber: match.currentNumber + 1
-                        });
-                    }
-                }
+            // Create data
+            if (toCreate && toCreate.length > 0) {
+                await db.Schedule.bulkCreate(toCreate);
             }
 
-            // Tạo mới
-            if (schedulesToCreate.length > 0) {
-                await db.Schedule.bulkCreate(schedulesToCreate);
-            }
-
-            // Cập nhật currentNumber
-            for (let item of schedulesToUpdate) {
-                await db.Schedule.update(
-                    { currentNumber: item.currentNumber },
-                    { where: { id: item.id } }
-                );
-            }
-
-            return resolve({    
+            resolve({
                 errCode: 0,
-                errMessage: 'Create/update schedule successfully'
+                errMessage: 'Ok',
             });
 
         } catch (e) {
@@ -239,9 +191,7 @@ let bulkCreateSchedule = (data) => {
 let getDoctorSchedule = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log("Check data: ", data);
-            
-            if(!data.doctorId || !data.date) {
+            if (!data.doctorId || !data.date) {
                 return resolve({
                     errCode: 1,
                     errMessage: 'Missing or invalid required parameters'
@@ -253,9 +203,18 @@ let getDoctorSchedule = (data) => {
                         doctorId: data.doctorId,
                         date: formattedDate
                     },
-                    attributes: ['currentNumber','maxNumber','date','timeType','doctorId']
+                    attributes: ['currentNumber', 'maxNumber', 'date', 'timeType', 'doctorId'],
+                    include: [
+                        {
+                            model: db.Allcode,
+                            as: 'timeTypeData',
+                            attributes: ['valueEn', 'valueVi'],
+                        }
+                    ],
+                    raw:false,
+                    nest:true
                 })
-                
+
                 resolve({
                     errCode: 0,
                     errMessage: 'OK',

@@ -48,20 +48,23 @@ class ManageSchedule extends Component {
             });
         }
         if (prevProps.doctorSchedule !== this.props.doctorSchedule) {
-            let { doctorSchedule } = this.props;
-            let { rangeTime } = this.state;
-
-            if (doctorSchedule && doctorSchedule.data && rangeTime && rangeTime.length > 0) {
+            let { rangeTime, selectedTime } = this.state;
+            if (this.props.doctorSchedule && this.props.doctorSchedule && rangeTime && rangeTime.length > 0) {
                 let updatedRangeTime = rangeTime.map(time => {
-                    let scheduleItem = doctorSchedule.data.find(item => item.timeType === time.keyMap);
+                    let scheduleItem = this.props.doctorSchedule.find(item => item.timeType === time.keyMap);
+
                     return {
                         ...time,
-                        isDisabled: scheduleItem ? scheduleItem.currentNumber >= scheduleItem.maxNumber : false
+                        isDisabled: scheduleItem ? scheduleItem.currentNumber >= scheduleItem.maxNumber : false,
+                        isSelected: scheduleItem ? true : false
                     };
                 });
 
+                let newSelectedTime = updatedRangeTime.filter(time => time.isSelected);
+
                 this.setState({
-                    rangeTime: updatedRangeTime
+                    rangeTime: updatedRangeTime,
+                    selectedTime: newSelectedTime
                 });
             }
         }
@@ -94,7 +97,10 @@ class ManageSchedule extends Component {
     }
 
     handleChangeDate = (date) => {
-        this.setState({ selectedDate: date[0] }, () => {
+        this.setState({
+            selectedDate: date[0],
+            selectedTime: [],
+        }, () => {
             const { selectedDoctor, selectedDate } = this.state;
             if (selectedDoctor && selectedDate) {
                 this.props.getDoctorSchedule({
@@ -108,9 +114,23 @@ class ManageSchedule extends Component {
         let { rangeTime, selectedTime } = this.state;
         if (rangeTime && rangeTime.length > 0) {
             let newRangeTime = rangeTime.map(time => {
+
                 if (time.id === item.id) {
+                    // Kiểm tra xem time này có tồn tại trong DB không
+                    const existsInDB = this.props.doctorSchedule?.data?.some(
+                        schedule => schedule.timeType === time.keyMap
+                    );
+
+                    // Nếu tồn tại trong DB thì không cho bỏ chọn
+                    if (existsInDB) {
+                        toast.warning("Không thể bỏ chọn khung giờ đã được đặt trong hệ thống");
+                        return time;
+                    }
+
                     time.isSelected = !time.isSelected;
-                    selectedTime = time.isSelected ? [...selectedTime, time] : selectedTime.filter(t => t.id !== time.id);
+                    selectedTime = time.isSelected
+                        ? [...selectedTime, time]
+                        : selectedTime.filter(t => t.id !== time.id);
                 }
                 return time;
             });
@@ -119,12 +139,11 @@ class ManageSchedule extends Component {
                 selectedTime: selectedTime
             });
         }
-
-
     };
 
     handleSaveSchedule = () => {
         const { selectedDoctor, selectedDate, selectedTime } = this.state;
+        const { doctorSchedule } = this.props;
 
         // Validate
         if (!selectedDoctor) {
@@ -140,41 +159,28 @@ class ManageSchedule extends Component {
             return;
         }
 
-        // Prepare data
+        // Lọc ra chỉ những time chưa tồn tại trong DB
+        const newTimes = selectedTime.filter(time =>
+            !doctorSchedule?.data?.some(schedule => schedule.timeType === time.keyMap)
+        );
+
+        if (newTimes.length === 0) {
+            toast.warning("Tất cả các khung giờ đã được lưu trước đó");
+            return;
+        }
+
+        // Prepare data chỉ với các time mới
         const scheduleData = {
             doctorId: selectedDoctor.value,
             date: new Date(selectedDate).getTime(),
-            time: selectedTime.map(item => ({
+            time: newTimes.map(item => ({
                 timeType: item.keyMap,
                 maxNumber: item.maxNumber || 10
             }))
         };
 
-        // Dispatch action và reset state khi thành công
+        // Dispatch action
         this.props.saveBulkScheduleDoctor(scheduleData)
-            .then(() => {
-                // Reset selected time slots
-                const resetRangeTime = this.state.rangeTime.map(item => ({
-                    ...item,
-                    isSelected: false
-                }));
-
-                this.setState({
-                    selectedTime: [],
-                    rangeTime: resetRangeTime
-                });
-
-                // Fetch lại lịch trình nếu cần
-                if (selectedDoctor && selectedDate) {
-                    this.props.getDoctorSchedule({
-                        doctorId: selectedDoctor.value,
-                        date: new Date(selectedDate).getTime()
-                    });
-                }
-            })
-            .catch(error => {
-                console.error("Lỗi khi lưu lịch trình:", error);
-            });
     };
     render() {
         let { listDoctors, selectedDoctor, selectedDate, rangeTime } = this.state;
@@ -215,12 +221,13 @@ class ManageSchedule extends Component {
                                 return (
                                     <button
                                         key={index}
-                                        className={`${language === LANGUAGES.VI ? 'btn btn-schedule vi' : 'btn btn-schedule en'} ${item.isSelected ? 'active' : ''}`}
+                                        className={`${language === LANGUAGES.VI ? 'btn btn-schedule vi' : 'btn btn-schedule en'} 
+        ${item.isSelected ? 'active' : ''}
+        ${item.isDisabled && !item.isSelected ? 'disabled' : ''}`}
                                         onClick={() => this.handleClickBtnTime(item)}
-                                        disabled={item.isDisabled}
+                                        disabled={item.isDisabled && !item.isSelected} // Chỉ disable nếu full và chưa được chọn
                                     >
                                         {language === LANGUAGES.VI ? item.valueVi : item.valueEn}
-                                        {item.isDisabled && <span className="slot-full"> (Full)</span>}
                                     </button>
                                 );
                             }
