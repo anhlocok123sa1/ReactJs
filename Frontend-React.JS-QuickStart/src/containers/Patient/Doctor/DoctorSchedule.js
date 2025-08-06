@@ -7,6 +7,8 @@ import moment from 'moment'
 import localization from 'moment/locale/vi'
 import { LANGUAGES } from '../../../utils'
 import * as actions from '../../../store/actions';
+import { FormattedMessage } from 'react-intl';
+
 
 class DoctorSchedule extends Component {
     constructor(props) {
@@ -56,10 +58,23 @@ class DoctorSchedule extends Component {
             let object = {};
             let date = moment(new Date()).add(i, 'days');
             if (language === LANGUAGES.VI) {
-                let labelVi = date.format('dddd - DD/MM');
-                object.label = this.capitalizeFirstLetter(labelVi);
+                if (i === 0) {
+                    let labelVi2 = date.format('DD/MM');
+                    let today = `Hôm nay - ${labelVi2}`;
+                    object.label = today
+                } else {
+                    let labelVi = date.format('dddd - DD/MM');
+                    object.label = this.capitalizeFirstLetter(labelVi);
+                }
             } else {
-                object.label = date.locale('en').format('dddd - DD/MM');
+                if (i === 0) {
+                    let labelEn2 = date.format('DD/MM');
+                    let today = `Today - ${labelEn2}`;
+                    object.label = today
+                } else {
+                    let labelEn = date.locale('en').format('dddd - DD/MM');
+                    object.label = this.capitalizeFirstLetter(labelEn);
+                }
             }
             object.value = date.startOf('day').valueOf();
             allDays.push(object);
@@ -98,8 +113,8 @@ class DoctorSchedule extends Component {
                     color: '#2684FF',
                     fontWeight: '600',
                     fontColor: '#2684FF',
-                    boxShadow:'none',
-                    borderRadius:'none',
+                    boxShadow: 'none',
+                    borderRadius: 'none',
                 }),
             menu: (provided) => ({
                 ...provided,
@@ -148,24 +163,38 @@ class DoctorSchedule extends Component {
                 </div>
                 <div className="all-available-time">
                     <div className="text-calendar">
-                        <span><i className="fas fa-calendar-alt"></i>Lịch khám</span>
+                        <span><i className="fas fa-calendar-alt"></i>
+                            <FormattedMessage id="patient.detail-doctor.schedule" />
+                        </span>
                     </div>
                     <div className="time-content">
                         {allAvalableTime && allAvalableTime.length > 0 ?
-                            allAvalableTime.map((item, index) => {
-                                console.log("check item", item);
+                            <>
+                                <div className="time-content-btns">
+                                    {allAvalableTime.map((item, index) => {
+                                        console.log("check item", item);
 
-                                return (
-                                    <button
-                                        className={language === LANGUAGES.VI ? 'btn btn-schedule vi' : 'btn btn-schedule en'}
-                                        key={index}
-                                    >
-                                        {language === LANGUAGES.VI ? item.timeTypeData.valueVi : item.timeTypeData.valueEn}
-                                    </button>
-                                )
-                            })
+                                        return (
+                                            <button
+                                                className={language === LANGUAGES.VI ? 'btn btn-schedule vi' : 'btn btn-schedule en'}
+                                                key={index}
+                                            >
+                                                {language === LANGUAGES.VI ? item.timeTypeData.valueVi : item.timeTypeData.valueEn}
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+
+                                <div className="book-free">
+                                    <FormattedMessage id="patient.detail-doctor.select" />
+                                    <i className="far fa-hand-point-up"></i>
+                                    <FormattedMessage id="patient.detail-doctor.book-free" />
+                                </div>
+                            </>
                             :
-                            <div className="">Không có lịch hẹn trong thời gian này, vui lòng chọn thời gian khác</div>
+                            <div className="no-schedule">
+                                <FormattedMessage id="patient.detail-doctor.no-schedule" />
+                            </div>
                         }
                     </div>
                 </div>

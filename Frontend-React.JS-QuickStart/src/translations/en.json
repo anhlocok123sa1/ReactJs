@@ -57,12 +57,12 @@
     },
     "doctor": {
       "manage": "Manage",
-      "manage-schedule":"Manage doctor's schedule"
+      "manage-schedule": "Manage doctor's schedule"
     }
   },
   "manage-user": {
     "add": "Add a new user",
-    "email":"Email",
+    "email": "Email",
     "password": "Password",
     "first-name": "First name",
     "last-name": "Last name",
@@ -89,5 +89,13 @@
     "select-date": "Select a date",
     "select-time": "Select a time",
     "save-schedule": "Save schedule"
+  },
+  "patient": {
+    "detail-doctor": {
+      "schedule": "Schedule",
+      "no-schedule": "The doctor has no appointments during this time, please choose another time",
+      "select": "Select ",
+      "book-free": " and book (free)"
+    }
   }
 }

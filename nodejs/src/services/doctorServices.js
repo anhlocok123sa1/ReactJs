@@ -166,11 +166,16 @@ let bulkCreateSchedule = (data) => {
                 attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
                 raw: true
             });
+            console.log("Check existing: ", existing);
+
 
             // Compare difference
             let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                return a.timeType === b.timeType && a.date === b.date;
+                let newDate = new Date(b.date).getTime()
+                return a.timeType === b.timeType && a.date === newDate;
             });
+            console.log("Check toCreate: ", toCreate);
+
 
             // Create data
             if (toCreate && toCreate.length > 0) {
@@ -211,8 +216,11 @@ let getDoctorSchedule = (data) => {
                             attributes: ['valueEn', 'valueVi'],
                         }
                     ],
-                    raw:false,
-                    nest:true
+                    raw: false,
+                    nest: true,
+                    order: [
+                        ['timeType', 'ASC']
+                    ]
                 })
 
                 resolve({

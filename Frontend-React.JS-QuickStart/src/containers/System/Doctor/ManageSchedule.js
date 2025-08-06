@@ -13,10 +13,12 @@ import { toast } from 'react-toastify';
 class ManageSchedule extends Component {
     constructor(props) {
         super(props);
+        let today = new Date();
+        today.setHours(0, 0, 0, 0); // Đặt về đầu ngày
         this.state = {
             selectedDoctor: null,
             listDoctors: [],
-            selectedDate: new Date().getTime(),
+            selectedDate: today.getTime(),
             rangeTime: [],
             selectedTime: []
         };
@@ -75,7 +77,7 @@ class ManageSchedule extends Component {
             if (selectedDoctor && selectedDate) {
                 this.props.getDoctorSchedule({
                     doctorId: selectedDoctor.value,
-                    date: new Date(selectedDate).getTime()
+                    date: new Date(selectedDate || this.state.selectedDate).getTime()
                 });
             }
         });
@@ -185,7 +187,7 @@ class ManageSchedule extends Component {
     render() {
         let { listDoctors, selectedDoctor, selectedDate, rangeTime } = this.state;
         let { language } = this.props;
-
+        let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
 
 
         return (
@@ -213,7 +215,7 @@ class ManageSchedule extends Component {
                                 onChange={this.handleChangeDate}
                                 className="form-control"
                                 value={selectedDate}
-                                minDate={new Date()}
+                                minDate={yesterday}
                             />
                         </div>
                         <div className="col-12 pick-hour-container">
