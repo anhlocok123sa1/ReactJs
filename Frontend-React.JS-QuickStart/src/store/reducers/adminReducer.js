@@ -21,6 +21,8 @@ const initialState = {
     bulkScheduleDoctor: [],
     isLoadingDoctorSchedule:false,
     doctorSchedule:[],
+    isLoadingAllRequiredDoctorInfo:false,
+    allRequiredDoctorInfo:[]
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -304,6 +306,33 @@ const adminReducer = (state = initialState, action) => {
             copyState.isLoadingDoctorSchedule = false;
             copyState.doctorSchedule = [];
             // console.log('save bulk schedule doctor failed: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+        //FETCH REQUIRED DOCTOR INFO
+        case actionTypes.FETCH_REQUIRED_DOCTOR_INFO_START: {
+            let copyState = { ...state };
+            copyState.isLoadingAllRequiredDoctorInfo = true;
+            // console.log('save required doctor info start: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.FETCH_REQUIRED_DOCTOR_INFO_SUCCESS: {
+            let copyState = { ...state };
+            copyState.isLoadingAllRequiredDoctorInfo = false;
+            copyState.allRequiredDoctorInfo = action.data;
+            // console.log('save required doctor info success: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.FETCH_REQUIRED_DOCTOR_INFO_FAILED: {
+            let copyState = { ...state };
+            copyState.isLoadingAllRequiredDoctorInfo = false;
+            copyState.allRequiredDoctorInfo = [];
+            // console.log('save required doctor info failed: ', copyState);
             return {
                 ...copyState,
             };
