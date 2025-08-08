@@ -6,6 +6,7 @@ import './DetailsDoctor.scss';
 import * as actions from '../../../store/actions';
 import { LANGUAGES } from '../../../utils';
 import DoctorSchedule from './DoctorSchedule';
+import DoctorExtraInfo from './DoctorExtraInfo';
 
 class DetailsDoctor extends Component {
     constructor(props) {
@@ -79,10 +80,14 @@ class DetailsDoctor extends Component {
                     <div className="schedule-doctor">
                         <div className="content-left">
                             <DoctorSchedule
-                                doctorId = {doctorId}
+                                doctorId={doctorId}
                             />
                         </div>
-                        <div className="content-right"></div>
+                        <div className="content-right">
+                            <DoctorExtraInfo
+                                doctorId={doctorId}
+                            />
+                        </div>
                     </div>
                     <div className="detail-doctor">
                         {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.contentHTML &&

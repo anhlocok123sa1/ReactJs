@@ -55,16 +55,37 @@ class ManageDoctor extends Component {
             });
         }
         if (prevProps.language !== this.props.language) {
-            let dataDoctor = this.buildDataInputSelect(this.props.allDoctors, 'USERS');
             let { resPayment, resPrice, resProvince } = this.props.allRequiredDoctorInfo;
+            let dataDoctor = this.buildDataInputSelect(this.props.allDoctors, 'USERS');
             let dataPayment = this.buildDataInputSelect(resPayment, 'PAYMENT');
             let dataPrice = this.buildDataInputSelect(resPrice, 'PRICE');
             let dataProvince = this.buildDataInputSelect(resProvince, 'PROVINCE');
+            let { detailDoctor } = this.props;
+
+            let selectedPrice = resPrice && resPrice.find(item => item.keyMap === detailDoctor?.DoctorInfoData?.priceId);
+            let selectedPayment = resPayment && resPayment.find(item => item.keyMap === detailDoctor?.DoctorInfoData?.paymentId);
+            let selectedProvince = resProvince && resProvince.find(item => item.keyMap === detailDoctor?.DoctorInfoData?.provinceId);
+
+            console.log("Check allRequiredDoctorInfo", detailDoctor);
+
+
             this.setState({
                 listDoctors: dataDoctor,
                 listPrice: dataPrice,
                 listPayment: dataPayment,
                 listProvince: dataProvince,
+                selectedPrice: selectedPrice ? {
+                    label: this.props.language === LANGUAGES.VI ? selectedPrice.valueVi : selectedPrice.valueEn,
+                    value: selectedPrice.keyMap
+                } : '',
+                selectedPayment: selectedPayment ? {
+                    label: this.props.language === LANGUAGES.VI ? selectedPayment.valueVi : selectedPayment.valueEn,
+                    value: selectedPayment.keyMap
+                } : '',
+                selectedProvince: selectedProvince ? {
+                    label: this.props.language === LANGUAGES.VI ? selectedProvince.valueVi : selectedProvince.valueEn,
+                    value: selectedProvince.keyMap
+                } : '',
             });
         }
         if (prevProps.detailDoctor !== this.props.detailDoctor) {
