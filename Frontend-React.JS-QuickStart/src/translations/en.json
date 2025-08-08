@@ -101,10 +101,16 @@
   "admin": {
     "manage-doctor": {
       "title": "Create information doctors",
-      "select-doctor":"Select a doctor",
-      "introduction":"Introduction",
+      "select-doctor": "Select a doctor",
+      "introduction": "Introduction",
       "add": "Create",
-      "save": "Save"
+      "save": "Save",
+      "price": "Examination Price",
+      "payment": "Payment Method",
+      "province": "Province",
+      "nameClinic": "Clinic Name",
+      "addressClinic": "Clinic Address",
+      "note": "Note"
     }
   }
 }

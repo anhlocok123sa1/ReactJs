@@ -1,7 +1,7 @@
 import { where } from "sequelize";
 import db from "../models"
 require('dotenv').config();
-import _, { includes } from 'lodash';
+import _, { add, includes } from 'lodash';
 
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE || 10;
 
@@ -61,45 +61,86 @@ let getAllDoctor = () => {
     })
 }
 
-let saveInfoDoctor = (data) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            if (!data.contentMarkdown || !data.contentHTML || !data.actions || !data.doctorId) {
-                resolve({
-                    errCode: 1,
-                    errMessage: 'Missing required parameters'
-                });
-            } else {
-                if (data.actions === "CREATE") {
-                    await db.Markdown.create({
-                        contentMarkdown: data.contentMarkdown,
-                        contentHTML: data.contentHTML,
-                        description: data.description,
-                        doctorId: data.doctorId
-                    });
-                } else if (data.actions === 'EDIT') {
-                    let doctorMarkdown = await db.Markdown.findOne({
-                        where: { doctorId: data.doctorId },
-                        raw: false
-                    });
+let saveInfoDoctor = async (data) => {
+    try {
+        const {
+            contentMarkdown, contentHTML, actions, doctorId, description,
+            selectedPrice, selectedPayment, selectedProvince,
+            nameClinic, addressClinic, note
+        } = data;
 
-                    if (doctorMarkdown) {
-                        doctorMarkdown.contentMarkdown = data.contentMarkdown;
-                        doctorMarkdown.contentHTML = data.contentHTML;
-                        doctorMarkdown.description = data.description;
-                        await doctorMarkdown.save();
-                    }
-                }
-                resolve({
-                    errCode: 0,
-                    errMessage: 'Save info doctor successfully'
-                });
-            }
-        } catch (e) {
-            reject(e);
+        // Kiểm tra dữ liệu bắt buộc
+        if (!contentMarkdown || !contentHTML || !actions || !doctorId) {
+            return {
+                errCode: 1,
+                errMessage: 'Missing required parameters'
+            };
         }
-    })
-}
+
+        // ====== Lưu bảng Markdown ======
+        if (actions === 'CREATE') {
+            await db.Markdown.create({
+                contentMarkdown,
+                contentHTML,
+                description,
+                doctorId
+            });
+        } else if (actions === 'EDIT') {
+            const doctorMarkdown = await db.Markdown.findOne({
+                where: { doctorId },
+                raw: false
+            });
+
+            if (doctorMarkdown) {
+                doctorMarkdown.contentMarkdown = contentMarkdown;
+                doctorMarkdown.contentHTML = contentHTML;
+                doctorMarkdown.description = description;
+                await doctorMarkdown.save();
+            }
+        }
+
+        // ====== Lưu bảng Doctor_Info ======
+        const doctorInfo = await db.Doctor_Info.findOne({
+            where: { doctorId },
+            raw: false
+        });
+
+        if (doctorInfo) {
+            // Update
+            doctorInfo.priceId = selectedPrice;
+            doctorInfo.paymentId = selectedPayment;
+            doctorInfo.provinceId = selectedProvince;
+            doctorInfo.nameClinic = nameClinic;
+            doctorInfo.addressClinic = addressClinic;
+            doctorInfo.note = note;
+            await doctorInfo.save();
+        } else {
+            // Create
+            await db.Doctor_Info.create({
+                doctorId,
+                priceId: selectedPrice,
+                paymentId: selectedPayment,
+                provinceId: selectedProvince,
+                nameClinic,
+                addressClinic,
+                note
+            });
+        }
+
+        return {
+            errCode: 0,
+            errMessage: 'Save info doctor successfully'
+        };
+
+    } catch (e) {
+        console.error(e);
+        return {
+            errCode: -1,
+            errMessage: 'Error from server'
+        };
+    }
+};
+
 
 let getDetailDoctor = (doctorId) => {
     return new Promise(async (resolve, reject) => {
@@ -116,8 +157,26 @@ let getDetailDoctor = (doctorId) => {
                         exclude: ['password']
                     },
                     include: [
-                        { model: db.Markdown, as: 'markdownData', attributes: ['contentMarkdown', 'contentHTML', 'description'] },
-                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
+                        {
+                            model: db.Markdown,
+                            as: 'markdownData',
+                            attributes: ['contentMarkdown', 'contentHTML', 'description']
+                        },
+                        {
+                            model: db.Allcode,
+                            as: 'positionData',
+                            attributes: ['valueEn', 'valueVi']
+                        },
+                        {
+                            model: db.Doctor_Info,
+                            as: 'DoctorInfoData',
+                            attributes: ['priceId', 'provinceId', 'paymentId', 'addressClinic', 'nameClinic', 'note'],
+                            include: [
+                                { model: db.Allcode, as: 'priceData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'provinceData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'paymentData', attributes: ['valueEn', 'valueVi'] },
+                            ]
+                        }
                     ],
                     raw: true,
                     nest: true
