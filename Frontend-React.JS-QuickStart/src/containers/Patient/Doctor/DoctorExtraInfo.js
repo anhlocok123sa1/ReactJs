@@ -6,7 +6,6 @@ import { LANGUAGES } from '../../../utils'
 import * as actions from '../../../store/actions';
 import { FormattedMessage } from 'react-intl';
 import NumberFormat from 'react-number-format'
-import { lang } from 'moment';
 
 
 class DoctorExtraInfo extends Component {

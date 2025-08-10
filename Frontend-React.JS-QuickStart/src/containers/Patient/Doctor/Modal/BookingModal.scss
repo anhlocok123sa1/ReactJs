@@ -1,0 +1,151 @@
+.booking-modal-container {
+    .booking-modal-content {
+        height        : 500px;
+        display       : flex;
+        flex-direction: column;
+        background    : #fff;
+        border-radius : 8px;
+        overflow      : hidden;
+
+        .booking-modal-header {
+            padding        : 10px 15px;
+            border-bottom  : 1px solid #ccc;
+            display        : flex;
+            justify-content: space-between;
+            align-items    : center;
+            background     : #f7f7f7;
+
+            .left {
+                font-size  : 15px;
+                font-weight: 600;
+                color      : #333;
+            }
+
+            .right {
+                cursor    : pointer;
+                font-size : 18px;
+                color     : #666;
+                transition: color 0.2s ease;
+
+                &:hover {
+                    color: #000;
+                }
+            }
+        }
+
+        .booking-modal-body {
+            flex      : 1;
+            padding   : 15px;
+            overflow-y: auto;
+
+            .schedule-summary {
+                display      : flex;
+                align-items  : center;
+                margin-bottom: 15px;
+                padding      : 8px 12px;
+                background   : #f0f8ff;
+                border-left  : 4px solid #2684ff;
+                border-radius: 4px;
+                font-size    : 14px;
+                color        : #333;
+
+                .label {
+                    font-weight : 600;
+                    margin-right: 5px;
+                }
+
+                .value {
+                    color: #2684ff;
+                }
+            }
+
+            .price-summary {
+                display      : flex;
+                align-items  : center;
+                margin-bottom: 15px;
+                padding      : 8px 12px;
+                background   : #fff9e6;
+                border-left  : 4px solid #f0ad4e;
+                border-radius: 4px;
+                font-size    : 14px;
+                color        : #333;
+
+                .label {
+                    font-weight : 600;
+                    margin-right: 5px;
+                }
+
+                .value {
+                    color      : #d48806;
+                    font-weight: 500;
+                }
+            }
+
+
+            .form-group {
+                label {
+                    font-size    : 13px;
+                    font-weight  : 500;
+                    margin-bottom: 5px;
+                    display      : inline-block;
+                }
+
+                input,
+                textarea {
+                    font-size    : 14px;
+                    padding      : 8px 10px;
+                    border       : 1px solid #ccc;
+                    border-radius: 4px;
+                    width        : 100%;
+                    transition   : border-color 0.2s ease;
+
+                    &:focus {
+                        outline     : none;
+                        border-color: #2684ff;
+                        box-shadow  : 0 0 3px rgba(38, 132, 255, 0.3);
+                    }
+                }
+
+                textarea {
+                    resize: none;
+                }
+            }
+        }
+
+        .booking-modal-footer {
+            display        : flex;
+            border-top     : 1px solid #ccc;
+            padding        : 10px 15px;
+            justify-content: flex-end;
+            gap            : 15px;
+            background     : #f7f7f7;
+
+            .btn {
+                min-width    : 100px;
+                font-size    : 14px;
+                font-weight  : 500;
+                border-radius: 4px;
+                transition   : all 0.2s ease;
+
+                &.btn-primary {
+                    background-color: #2684ff;
+                    border          : none;
+
+                    &:hover {
+                        background-color: #1a5fbf;
+                    }
+                }
+
+                &.btn-secondary {
+                    background-color: #e0e0e0;
+                    border          : none;
+                    color           : #333;
+
+                    &:hover {
+                        background-color: #c2c2c2;
+                    }
+                }
+            }
+        }
+    }
+}

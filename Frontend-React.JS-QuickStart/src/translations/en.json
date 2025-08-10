@@ -103,6 +103,19 @@
       "detail": "View Details",
       "payment": "Patients can pay in cash or by card",
       "hide-price": "Hide Price List"
+    },
+    "booking": {
+      "title": "Medical Appointment Booking Information",
+      "time": "Time",
+      "fullname": "Full Name",
+      "phone": "Phone Number",
+      "email": "Email",
+      "address": "Address",
+      "reason": "Reason for Visit",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "for-who": "Booking for",
+      "gender": "Gender"
     }
   },
   "admin": {

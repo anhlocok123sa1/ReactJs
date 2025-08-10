@@ -98,11 +98,24 @@
       "book-free": " và đặt (Miễn phí)"
     },
     "extra-info-doctor": {
-      "text-address":"Địa chỉ khám",
-      "price":"Giá khám: ",
-      "detail":"Xem chi tiết",
-      "payment":"Người bệnh có thể thanh toán bằng hình thức tiền mặt hoặc quẹt thẻ",
-      "hide-price":"Ản bảng giá"
+      "text-address": "Địa chỉ khám",
+      "price": "Giá khám: ",
+      "detail": "Xem chi tiết",
+      "payment": "Người bệnh có thể thanh toán bằng hình thức tiền mặt hoặc quẹt thẻ",
+      "hide-price": "Ản bảng giá"
+    },
+    "booking": {
+      "title": "Thông tin đặt lịch khám bệnh",
+      "time": "Thời gian",
+      "fullname": "Họ và tên",
+      "phone": "Số điện thoại",
+      "email": "Email",
+      "address": "Địa chỉ",
+      "reason": "Lý do khám",
+      "confirm": "Xác nhận",
+      "cancel": "Hủy",
+      "for-who": "Đặt cho ai",
+      "gender": "Giới tính"
     }
   },
   "admin": {
@@ -112,12 +125,12 @@
       "introduction": "Thông tin giới thiệu",
       "add": "Tạo thông tin",
       "save": "Lưu thông tin",
-      "price":"Giá khám bệnh",
-      "payment":"Phương thức thanh toán",
-      "province":"Tỉnh thành",
-      "nameClinic":"Tên phòng khám",
-      "addressClinic":"Địa chỉ phòng khám",
-      "note":"Ghi chú"
+      "price": "Giá khám bệnh",
+      "payment": "Phương thức thanh toán",
+      "province": "Tỉnh thành",
+      "nameClinic": "Tên phòng khám",
+      "addressClinic": "Địa chỉ phòng khám",
+      "note": "Ghi chú"
     }
   }
 }
