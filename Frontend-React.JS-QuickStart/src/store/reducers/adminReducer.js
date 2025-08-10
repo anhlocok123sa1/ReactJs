@@ -8,21 +8,23 @@ const initialState = {
     isLoadingPosition: false,
     positions: [],
     isLoadingAllUsers: false,
-    allUsers:[],
+    allUsers: [],
     isLoadingTopDoctors: false,
     topDoctors: [],
     isLoadingAllDoctors: false,
-    allDoctors:[],
+    allDoctors: [],
     isLoadingDetailDoctor: false,
     detailDoctor: {},
     isLoadingAllCodeScheduleTime: false,
     allCodeScheduleTime: [],
     isLoadingBulkScheduleDoctor: false,
     bulkScheduleDoctor: [],
-    isLoadingDoctorSchedule:false,
-    doctorSchedule:[],
-    isLoadingAllRequiredDoctorInfo:false,
-    allRequiredDoctorInfo:[]
+    isLoadingDoctorSchedule: false,
+    doctorSchedule: [],
+    isLoadingAllRequiredDoctorInfo: false,
+    allRequiredDoctorInfo: [],
+    isLoadingExtraDoctorInfo: false,
+    extraDoctorInfo: []
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -146,7 +148,7 @@ const adminReducer = (state = initialState, action) => {
                 ...copyState,
             };
         }
-        
+
         //TOP DOCTOR
         case actionTypes.FETCH_TOP_DOCTOR_HOME_START: {
             let copyState = { ...state };
@@ -282,7 +284,7 @@ const adminReducer = (state = initialState, action) => {
                 ...copyState,
             };
         }
-        
+
         //FETCH DOCTOR SCHEDULE
         case actionTypes.FETCH_DOCTOR_SCHEDULE_START: {
             let copyState = { ...state };
@@ -332,6 +334,33 @@ const adminReducer = (state = initialState, action) => {
             let copyState = { ...state };
             copyState.isLoadingAllRequiredDoctorInfo = false;
             copyState.allRequiredDoctorInfo = [];
+            // console.log('save required doctor info failed: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+        //FETCH EXTRA DOCTOR INFO
+        case actionTypes.FETCH_EXTRA_DOCTOR_INFO_START: {
+            let copyState = { ...state };
+            copyState.isLoadingExtraDoctorInfo = true;
+            // console.log('save required doctor info start: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.FETCH_EXTRA_DOCTOR_INFO_SUCCESS: {
+            let copyState = { ...state };
+            copyState.isLoadingExtraDoctorInfo = false;
+            copyState.extraDoctorInfo = action.data;
+            // console.log('save required doctor info success: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.FETCH_EXTRA_DOCTOR_INFO_FAILED: {
+            let copyState = { ...state };
+            copyState.isLoadingExtraDoctorInfo = false;
+            copyState.extraDoctorInfo = [];
             // console.log('save required doctor info failed: ', copyState);
             return {
                 ...copyState,

@@ -24,10 +24,10 @@
     .content-down {
         .short-info {
             span {
-                cursor     : pointer;
-                color      : #48c4d3;
-                font-size  : 14px;
-                font-weight: 600;
+                cursor      : pointer;
+                color       : #48c4d3;
+                font-size   : 14px;
+                font-weight : 600;
                 padding-left: 5px;
             }
         }
@@ -46,6 +46,10 @@
 
                 .right {
                     float: right;
+
+                    .currency {
+                        margin: 5px 5px;
+                    }
                 }
             }
 

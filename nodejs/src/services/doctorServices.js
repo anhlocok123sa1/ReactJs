@@ -225,7 +225,7 @@ let bulkCreateSchedule = (data) => {
                 attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
                 raw: true
             });
-            console.log("Check existing: ", existing);
+            // console.log("Check existing: ", existing);
 
 
             // Compare difference
@@ -233,7 +233,7 @@ let bulkCreateSchedule = (data) => {
                 let newDate = new Date(b.date).getTime()
                 return a.timeType === b.timeType && a.date === newDate;
             });
-            console.log("Check toCreate: ", toCreate);
+            // console.log("Check toCreate: ", toCreate);
 
 
             // Create data
@@ -294,6 +294,42 @@ let getDoctorSchedule = (data) => {
     })
 }
 
+let getExtraInfoDoctorById = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                reject({
+                    errCode: 1,
+                    errMessage: "Missing required parameter!"
+                })
+            } else {
+                let data = await db.Doctor_Info.findOne({
+                    where: {
+                        doctorId: doctorId
+                    },
+                    attributes: {
+                        exclude: ['id', 'doctorId']
+                    },
+                    include: [
+                        { model: db.Allcode, as: 'priceData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'provinceData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'paymentData', attributes: ['valueEn', 'valueVi'] },
+                    ],
+                    raw: true,
+                    nest: true
+                })
+                if (!data) data = {};
+                resolve({
+                    errCode: 0,
+                    data: data
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 
 
 module.exports = {
@@ -302,5 +338,6 @@ module.exports = {
     saveInfoDoctor: saveInfoDoctor,
     getDetailDoctor: getDetailDoctor,
     bulkCreateSchedule: bulkCreateSchedule,
-    getDoctorSchedule: getDoctorSchedule
+    getDoctorSchedule: getDoctorSchedule,
+    getExtraInfoDoctorById: getExtraInfoDoctorById
 }

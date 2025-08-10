@@ -46,6 +46,16 @@ class DoctorSchedule extends Component {
                 allAvalableTime: this.props.doctorSchedule
             })
         }
+        if (prevProps.doctorId !== this.props.doctorId) {
+            let allDays = this.getAllDays(this.props.language);
+            this.props.getDoctorSchedule({
+                doctorId: this.props.doctorId,
+                date: allDays[0].value
+            })
+            this.setState({
+                allAvalableTime: this.props.doctorSchedule
+            })
+        }
     }
 
     capitalizeFirstLetter = (val) => {
@@ -85,7 +95,6 @@ class DoctorSchedule extends Component {
     handleChangeDate = (selectedDay) => {
         this.setState({ selectedDay });
         let { doctorId } = this.props
-        // TODO: Gọi API lấy lịch khám của bác sĩ ở đây nếu cần
         this.props.getDoctorSchedule({
             doctorId: doctorId,
             date: selectedDay.value
@@ -97,8 +106,6 @@ class DoctorSchedule extends Component {
         let { language } = this.props
         let customStyles = {
             control: (provided, state) => (
-                console.log("Check state select: ", provided),
-
                 {
                     ...provided,
                     width: 200,
@@ -172,7 +179,6 @@ class DoctorSchedule extends Component {
                             <>
                                 <div className="time-content-btns">
                                     {allAvalableTime.map((item, index) => {
-                                        console.log("check item", item);
 
                                         return (
                                             <button

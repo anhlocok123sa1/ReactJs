@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes';
-import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices } from '../../services/userService';
+import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices, getExtraInfoDoctorById } from '../../services/userService';
 import { toast } from 'react-toastify';
 
 // GENDER
@@ -399,7 +399,7 @@ export const getRequiredDoctorInfo = () => {
             if (
                 resPrice && resPrice.errCode === 0 &&
                 resPayment && resPayment.errCode === 0 &&
-                resProvince && resProvince.errCode === 0 
+                resProvince && resProvince.errCode === 0
             ) {
                 let data = {
                     resPrice: resPrice.data,
@@ -424,4 +424,30 @@ export const getRequiredDoctorInfoSuccess = (data) => ({
 
 export const getRequiredDoctorInfoFailed = () => ({
     type: actionTypes.FETCH_REQUIRED_DOCTOR_INFO_FAILED
+});
+
+export const getExtraDoctorInfo = (doctorId) => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_EXTRA_DOCTOR_INFO_START });
+            let res = await getExtraInfoDoctorById(doctorId)
+            if (res && res.errCode === 0) {
+                dispatch(getExtraDoctorInfoSuccess(res.data));
+            } else {
+                dispatch(getExtraDoctorInfoFailed());
+            }
+        } catch (e) {
+            dispatch(getExtraDoctorInfoFailed());
+            console.log('fetch extra doctor info start error: ', e);
+        }
+    };
+};
+
+export const getExtraDoctorInfoSuccess = (data) => ({
+    type: actionTypes.FETCH_EXTRA_DOCTOR_INFO_SUCCESS,
+    data: data
+});
+
+export const getExtraDoctorInfoFailed = () => ({
+    type: actionTypes.FETCH_EXTRA_DOCTOR_INFO_FAILED
 });
