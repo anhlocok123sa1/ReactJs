@@ -4,7 +4,11 @@ import { withRouter } from 'react-router-dom';
 import './ProfileDoctor.scss';
 import { LANGUAGES } from '../../../utils'
 // import * as actions from '../../../store/actions';
-// import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
+import moment from 'moment';
+import NumberFormat from 'react-number-format'
+import _ from 'lodash';
+
 
 
 class ProfileDoctor extends Component {
@@ -18,19 +22,98 @@ class ProfileDoctor extends Component {
     componentDidMount() {
 
     }
+    renderTimeBooking = (dataTime, language) => {
+        if (dataTime && !_.isEmpty(dataTime)) {
+            return (
+                <p>
+                    {/* Tóm tắt slot đã chọn */}
+                    <div className="schedule-summary" >
+                        <div className="label">
+                            <FormattedMessage id="patient.booking.time" defaultMessage="Thời gian" />:
+                        </div>
+                        <div className="value">
+                            {this.buildTimeBooking(dataTime, language) || '—'}
+                        </div>
+                    </div >
+                </p>
+            )
+        }
+        return <></>
+    }
+    renderPriceBooking = (extraDoctorInfo, language) => {
+        if (extraDoctorInfo && !_.isEmpty(extraDoctorInfo)) {
+            return (
+                <>
+                    {/* Giá khám */}
+                    <div className="price-summary">
+                        <div className="label">
+                            <FormattedMessage id="patient.extra-info-doctor.price" defaultMessage="Giá khám:" />
+                        </div>
+                        <div className="value">
+                            {
+                                extraDoctorInfo &&
+                                    extraDoctorInfo.priceData &&
+                                    language === LANGUAGES.VI ?
+                                    <NumberFormat
+                                        className='currency'
+                                        value={extraDoctorInfo?.priceData?.valueVi}
+                                        displayType={'text'}
+                                        thousandSeparator={true}
+                                        suffix={'VND'}
+                                    />
+                                    :
+                                    <NumberFormat
+                                        className='currency'
+                                        value={extraDoctorInfo?.priceData?.valueEn}
+                                        displayType={'text'}
+                                        thousandSeparator={true}
+                                        suffix={'$'}
+                                    />
+                            }
+                        </div>
+                    </div>
+                </>
+            )
+        }
+        return <></>
+    }
 
     componentDidUpdate(prevProps) {
-
+        if (prevProps.language !== this.props.language) {
+            this.buildTimeBooking(this.props.dataTime, this.props.language)
+        }
     }
+    capitalizeFirstLetter = (val) => {
+        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    }
+    buildTimeBooking = (dataTime, language) => {
+        if (!dataTime) return '';
+        const timeLabel =
+            language === LANGUAGES.VI
+                ? dataTime?.timeTypeData?.valueVi
+                : dataTime?.timeTypeData?.valueEn;
+
+        // `dataTime.date` là ms (startOf('day')) bạn đã truyền từ DoctorSchedule
+        const m = moment(Number(dataTime.date || 0));
+        const dateLabel =
+            language === LANGUAGES.VI
+                ? this.capitalizeFirstLetter(m.locale('vi').format('dddd, DD/MM/YYYY'))
+                : m.locale('en').format('ddd, MM/DD/YYYY');
+
+        return `${timeLabel} • ${dateLabel}`;
+    };
 
 
     render() {
-        let { detailDoctor, language } = this.props;
+        let { detailDoctor, language, isShowDescriptionDoctor, dataTime, extraDoctorInfo } = this.props;
         let nameVi = '', nameEn = '';
         if (detailDoctor && detailDoctor.positionData) {
             nameVi = `${detailDoctor.positionData.valueVi}, ${detailDoctor.lastName} ${detailDoctor.firstName}`;
             nameEn = `${detailDoctor.positionData.valueEn}, ${detailDoctor.firstName} ${detailDoctor.lastName}`;
         }
+        console.log("Check datatime: ", dataTime);
+        console.log("Check extraDoctorInfo: ", extraDoctorInfo);
+
 
         return (
             <div className="intro-doctor">
@@ -45,9 +128,19 @@ class ProfileDoctor extends Component {
                         </p>
                     </div>
                     <div className="down">
-                        {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.description &&
-                            <span>{detailDoctor.markdownData.description}</span>
+                        {isShowDescriptionDoctor ?
+                            <>
+                                {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.description &&
+                                    <span>{detailDoctor.markdownData.description}</span>
+                                }
+                            </>
+                            :
+                            <>
+                                {this.renderTimeBooking(dataTime, language)}
+                                {this.renderPriceBooking(extraDoctorInfo, language)}
+                            </>
                         }
+
                     </div>
                 </div>
             </div>
@@ -60,6 +153,7 @@ const mapStateToProps = state => {
     return {
         language: state.app.language,
         detailDoctor: state.admin.detailDoctor,
+        extraDoctorInfo: state.admin.extraDoctorInfo
     };
 };
 

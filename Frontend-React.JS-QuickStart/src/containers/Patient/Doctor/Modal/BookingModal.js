@@ -5,41 +5,19 @@ import './BookingModal.scss';
 import { Modal } from 'reactstrap'
 import { LANGUAGES } from '../../../../utils'
 import { FormattedMessage } from 'react-intl';
-import moment from 'moment';
 import 'moment/locale/vi';
 import ProfileDoctor from '../ProfileDoctor';
-import NumberFormat from 'react-number-format'
 
 class BookingModal extends Component {
-    capitalizeFirstLetter = (val) => {
-        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-    }
+    
 
-    buildTimeBooking = (dataTime, language) => {
-        if (!dataTime) return '';
-        const timeLabel =
-            language === LANGUAGES.VI
-                ? dataTime?.timeTypeData?.valueVi
-                : dataTime?.timeTypeData?.valueEn;
-
-        // `dataTime.date` là ms (startOf('day')) bạn đã truyền từ DoctorSchedule
-        const m = moment(Number(dataTime.date || 0));
-        const dateLabel =
-            language === LANGUAGES.VI
-                ? this.capitalizeFirstLetter(m.locale('vi').format('dddd, DD/MM/YYYY'))
-                : m.locale('en').format('ddd, MM/DD/YYYY');
-
-        return `${timeLabel} • ${dateLabel}`;
-    };
+    
     componentDidUpdate(prevProps) {
-        if (prevProps.language !== this.props.language) {
-            this.buildTimeBooking(this.props.dataTime, this.props.language)
-        }
+        
     }
 
     render() {
-        const { isOpen, closeBookingModal, dataTime, language, extraDoctorInfo } = this.props;
-        console.log("Check extraDoctorInfo from BookingModals: ", extraDoctorInfo);
+        const { isOpen, closeBookingModal, dataTime, language,  } = this.props;
 
 
         return (
@@ -62,46 +40,13 @@ class BookingModal extends Component {
                     </div>
 
                     <div className="booking-modal-body">
-                        <ProfileDoctor />
-                        {/* Tóm tắt slot đã chọn */}
-                        <div className="schedule-summary">
-                            <div className="label">
-                                <FormattedMessage id="patient.booking.time" defaultMessage="Thời gian" />:
-                            </div>
-                            <div className="value">
-                                {this.buildTimeBooking(dataTime, language) || '—'}
-                            </div>
-                        </div>
+                        <ProfileDoctor
+                            isShowDescriptionDoctor={false}
+                            dataTime={dataTime}
+                        />
+                        
 
-                        {/* Giá khám */}
-                        <div className="price-summary">
-                            <div className="label">
-                                <FormattedMessage id="patient.extra-info-doctor.price" defaultMessage="Giá khám:" />
-
-                            </div>
-                            <div className="value">
-                                {
-                                    extraDoctorInfo &&
-                                        extraDoctorInfo.priceData &&
-                                        language === LANGUAGES.VI ?
-                                        <NumberFormat
-                                            className='currency'
-                                            value={extraDoctorInfo?.priceData?.valueVi}
-                                            displayType={'text'}
-                                            thousandSeparator={true}
-                                            suffix={'VND'}
-                                        />
-                                        :
-                                        <NumberFormat
-                                            className='currency'
-                                            value={extraDoctorInfo?.priceData?.valueEn}
-                                            displayType={'text'}
-                                            thousandSeparator={true}
-                                            suffix={'$'}
-                                        />
-                                }
-                            </div>
-                        </div>
+                        
 
                         {/* Form thông tin bệnh nhân (placeholder — bạn có thể nối state/validate sau) */}
                         <div className="row form-group">
@@ -152,7 +97,6 @@ class BookingModal extends Component {
 
 const mapStateToProps = (state) => ({
     language: state.app.language,
-    extraDoctorInfo: state.admin.extraDoctorInfo
 });
 
 export default connect(mapStateToProps)(withRouter(BookingModal));
