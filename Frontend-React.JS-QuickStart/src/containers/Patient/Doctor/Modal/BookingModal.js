@@ -7,11 +7,14 @@ import { LANGUAGES } from '../../../../utils'
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import 'moment/locale/vi';
+import ProfileDoctor from '../ProfileDoctor';
+import NumberFormat from 'react-number-format'
 
 class BookingModal extends Component {
     capitalizeFirstLetter = (val) => {
         return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     }
+
     buildTimeBooking = (dataTime, language) => {
         if (!dataTime) return '';
         const timeLabel =
@@ -35,8 +38,9 @@ class BookingModal extends Component {
     }
 
     render() {
-        const { isOpen, closeBookingModal, dataTime, language } = this.props;
-        console.log("Check data Time: ", dataTime);
+        const { isOpen, closeBookingModal, dataTime, language, extraDoctorInfo } = this.props;
+        console.log("Check extraDoctorInfo from BookingModals: ", extraDoctorInfo);
+
 
         return (
             <Modal
@@ -58,6 +62,7 @@ class BookingModal extends Component {
                     </div>
 
                     <div className="booking-modal-body">
+                        <ProfileDoctor />
                         {/* Tóm tắt slot đã chọn */}
                         <div className="schedule-summary">
                             <div className="label">
@@ -72,13 +77,29 @@ class BookingModal extends Component {
                         <div className="price-summary">
                             <div className="label">
                                 <FormattedMessage id="patient.extra-info-doctor.price" defaultMessage="Giá khám:" />
+
                             </div>
                             <div className="value">
-                                {dataTime?.priceData
-                                    ? language === LANGUAGES.VI
-                                        ? `${dataTime.priceData.valueVi} VND`
-                                        : `${dataTime.priceData.valueEn} USD`
-                                    : '—'}
+                                {
+                                    extraDoctorInfo &&
+                                        extraDoctorInfo.priceData &&
+                                        language === LANGUAGES.VI ?
+                                        <NumberFormat
+                                            className='currency'
+                                            value={extraDoctorInfo?.priceData?.valueVi}
+                                            displayType={'text'}
+                                            thousandSeparator={true}
+                                            suffix={'VND'}
+                                        />
+                                        :
+                                        <NumberFormat
+                                            className='currency'
+                                            value={extraDoctorInfo?.priceData?.valueEn}
+                                            displayType={'text'}
+                                            thousandSeparator={true}
+                                            suffix={'$'}
+                                        />
+                                }
                             </div>
                         </div>
 
@@ -131,6 +152,7 @@ class BookingModal extends Component {
 
 const mapStateToProps = (state) => ({
     language: state.app.language,
+    extraDoctorInfo: state.admin.extraDoctorInfo
 });
 
 export default connect(mapStateToProps)(withRouter(BookingModal));

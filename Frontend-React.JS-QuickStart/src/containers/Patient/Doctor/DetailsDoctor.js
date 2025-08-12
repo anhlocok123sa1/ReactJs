@@ -33,6 +33,7 @@ class DetailsDoctor extends Component {
         if (prevDoctorId !== currentDoctorId) {
             // console.log('Doctor ID changed:', currentDoctorId);
             // Fetch new doctor details logic can be added here
+            this.props.getDetailDoctor(currentDoctorId);
         }
         if (prevProps.detailDoctor !== this.props.detailDoctor) {
             this.setState({
@@ -52,6 +53,8 @@ class DetailsDoctor extends Component {
             nameVi = `${detailDoctor.positionData.valueVi}, ${detailDoctor.lastName} ${detailDoctor.firstName}`;
             nameEn = `${detailDoctor.positionData.valueEn}, ${detailDoctor.firstName} ${detailDoctor.lastName}`;
         }
+        // console.log("check state details doctor: ",this.state);
+        
 
         let doctorId = this.props.match.params.id;
 
