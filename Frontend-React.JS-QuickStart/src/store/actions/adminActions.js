@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes';
-import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices, getExtraInfoDoctorById } from '../../services/userService';
+import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices, getExtraInfoDoctorById, postPatientBookingAppointment } from '../../services/userService';
 import { toast } from 'react-toastify';
 
 // GENDER
@@ -426,6 +426,7 @@ export const getRequiredDoctorInfoFailed = () => ({
     type: actionTypes.FETCH_REQUIRED_DOCTOR_INFO_FAILED
 });
 
+//GET EXTRA DOCTOR INFO
 export const getExtraDoctorInfo = (doctorId) => {
     return async (dispatch, getState) => {
         try {
@@ -450,4 +451,33 @@ export const getExtraDoctorInfoSuccess = (data) => ({
 
 export const getExtraDoctorInfoFailed = () => ({
     type: actionTypes.FETCH_EXTRA_DOCTOR_INFO_FAILED
+});
+
+//SAVE PATIENT BOOKING APPOINTMENT
+export const savePatientBookingAppointment = (data) => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.SAVE_PATIENT_BOOKING_APPOINTMENT_START });
+            let res = await postPatientBookingAppointment(data)
+            if (res && res.errCode === 0) {
+                dispatch(savePatientBookingAppointmentSuccess(res.data));
+                toast.success("Booking a new appointment success!")
+            } else {
+                dispatch(savePatientBookingAppointmentFailed());
+                toast.error("Booking a new appointment failed!")
+            }
+        } catch (e) {
+            dispatch(savePatientBookingAppointmentFailed());
+            console.log('fetch extra doctor info start error: ', e);
+        }
+    };
+};
+
+export const savePatientBookingAppointmentSuccess = (data) => ({
+    type: actionTypes.SAVE_PATIENT_BOOKING_APPOINTMENT_SUCCESS,
+    data: data
+});
+
+export const savePatientBookingAppointmentFailed = () => ({
+    type: actionTypes.SAVE_PATIENT_BOOKING_APPOINTMENT_FAILED
 });

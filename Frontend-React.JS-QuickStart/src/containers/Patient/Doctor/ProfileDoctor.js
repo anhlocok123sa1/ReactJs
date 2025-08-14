@@ -111,8 +111,6 @@ class ProfileDoctor extends Component {
             nameVi = `${detailDoctor.positionData.valueVi}, ${detailDoctor.lastName} ${detailDoctor.firstName}`;
             nameEn = `${detailDoctor.positionData.valueEn}, ${detailDoctor.firstName} ${detailDoctor.lastName}`;
         }
-        console.log("Check datatime: ", dataTime);
-        console.log("Check extraDoctorInfo: ", extraDoctorInfo);
 
 
         return (

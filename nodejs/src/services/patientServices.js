@@ -4,6 +4,8 @@ require('dotenv').config();
 let saveBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            console.log("Check data: ", data);
+
             if (!data.email || !data.doctorId || !data.timeType || !data.date) {
                 resolve({
                     errCode: 1,

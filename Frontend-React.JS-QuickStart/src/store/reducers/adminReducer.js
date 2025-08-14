@@ -24,7 +24,9 @@ const initialState = {
     isLoadingAllRequiredDoctorInfo: false,
     allRequiredDoctorInfo: [],
     isLoadingExtraDoctorInfo: false,
-    extraDoctorInfo: []
+    extraDoctorInfo: [],
+    isLoadingPatientBookingAppointment: false,
+    patientBookingAppointment: [],
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -361,6 +363,33 @@ const adminReducer = (state = initialState, action) => {
             let copyState = { ...state };
             copyState.isLoadingExtraDoctorInfo = false;
             copyState.extraDoctorInfo = [];
+            // console.log('save required doctor info failed: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+        //SAVE PATIENT BOOKING APPOINTMENT
+        case actionTypes.SAVE_PATIENT_BOOKING_APPOINTMENT_START: {
+            let copyState = { ...state };
+            copyState.isLoadingPatientBookingAppointment = true;
+            // console.log('save required doctor info start: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.SAVE_PATIENT_BOOKING_APPOINTMENT_SUCCESS: {
+            let copyState = { ...state };
+            copyState.isLoadingPatientBookingAppointment = false;
+            copyState.patientBookingAppointment = action.data;
+            // console.log('save required doctor info success: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.SAVE_PATIENT_BOOKING_APPOINTMENT_FAILED: {
+            let copyState = { ...state };
+            copyState.isLoadingPatientBookingAppointment = false;
+            copyState.patientBookingAppointment = [];
             // console.log('save required doctor info failed: ', copyState);
             return {
                 ...copyState,

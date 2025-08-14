@@ -115,7 +115,8 @@
       "confirm": "Confirm",
       "cancel": "Cancel",
       "for-who": "Booking for",
-      "gender": "Gender"
+      "gender": "Gender",
+      "birthday":"Birthday"
     }
   },
   "admin": {
