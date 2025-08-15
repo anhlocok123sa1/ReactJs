@@ -5,6 +5,7 @@ import './BookingModal.scss';
 import { Modal } from 'reactstrap';
 import { LANGUAGES } from '../../../../utils'
 import { FormattedMessage } from 'react-intl';
+import moment from 'moment';
 import 'moment/locale/vi';
 import ProfileDoctor from '../ProfileDoctor';
 import DatePicker from "../../../../components/Input/DatePicker";
@@ -31,6 +32,10 @@ class BookingModal extends Component {
 
     componentDidMount() {
         this.props.getGenders();
+    }
+
+    capitalizeFirstLetter = (val) => {
+        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     }
 
     buildDataGender = (data) => {
@@ -92,23 +97,58 @@ class BookingModal extends Component {
 
     handleConfirmBooking = () => {
         // console.log("Check state hit confirm: ", this.state);
-        const { dataTime } = this.props;
-        const doctorId = dataTime?.doctorId || '';
-        const timeType = dataTime?.timeType || '';
-        const date = dataTime?.date || '';
+        let { dataTime, language } = this.props;
+        let doctorId = dataTime?.doctorId || '';
+        let timeType = dataTime?.timeType || '';
+        let date = dataTime?.date || '';
+        let { fullName, phoneNumber, email, address, reason, birthday, selectedGender } = this.state
+        let timeString = this.buildTimeBooking(dataTime);
+        let doctorName = this.buildDoctorName(dataTime)
 
         this.props.savePatientBookingAppointment({
-            fullName: this.state.fullName,
-            phoneNumber: this.state.phoneNumber,
-            email: this.state.email,
-            address: this.state.address,
-            reason: this.state.reason,
-            birthday: this.state.birthday,
-            selectedGender: this.state.selectedGender,
+            fullName,
+            phoneNumber,
+            email,
+            address,
+            reason,
+            birthday,
+            selectedGender,
             doctorId,
             timeType,
             date,
+            language,
+            timeString,
+            doctorName
         });
+    }
+
+    buildTimeBooking = (dataTime) => {
+        let { language } = this.props
+        if (dataTime && !_.isEmpty(dataTime)) {
+            const timeLabel =
+                language === LANGUAGES.VI
+                    ? dataTime?.timeTypeData?.valueVi
+                    : dataTime?.timeTypeData?.valueEn;
+
+            // `dataTime.date` là ms (startOf('day')) bạn đã truyền từ DoctorSchedule
+            const m = moment(Number(dataTime.date || 0));
+            const dateLabel =
+                language === LANGUAGES.VI
+                    ? this.capitalizeFirstLetter(m.locale('vi').format('dddd, DD/MM/YYYY'))
+                    : m.locale('en').format('ddd, MM/DD/YYYY');
+
+            return `${timeLabel} • ${dateLabel}`;
+        }
+        return ``
+    };
+
+    buildDoctorName = (dataTime) => {
+        let { language } = this.props
+        if (dataTime && !_.isEmpty(dataTime)) {
+            let name = language === LANGUAGES.VI ? `${dataTime.doctorData.lastName} ${dataTime.doctorData.firstName}` : `${dataTime.doctorData.firstName} ${dataTime.doctorData.lastName}`
+            return name;
+        }
+        return ``
     }
 
     render() {

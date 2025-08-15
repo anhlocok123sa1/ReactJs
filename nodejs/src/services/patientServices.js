@@ -7,8 +7,8 @@ let saveBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
         const t = await db.sequelize.transaction();
         try {
-            const { email, doctorId, timeType, date } = data || {};
-            if (!email || !doctorId || !timeType || !date) {
+            const { email, doctorId, timeType, date, fullName, timeString, language, doctorName } = data || {};
+            if (!email || !doctorId || !timeType || !date || !fullName || !timeString || !language) {
                 resolve({ errCode: 1, errMessage: 'Missing required parameter' });
                 return;
             }
@@ -44,13 +44,16 @@ let saveBookAppointment = (data) => {
 
             await t.commit();
 
-            try { await sendEmail({
-                receiverEmail:data.email,
-                patientName:"Patient Name",
-                time:"8:00 - 9:00 Chủ nhật 14/08/2025",
-                doctorName:"Doctor Name",
-                redirectLink:"https://www.youtube.com/watch?v=0GL--Adfqhc&list=PLncHg6Kn2JT6E38Z3kit9Hnif1xC_9VqI&index=97"
-            }); } catch (e) { console.error('Send email failed:', e); }
+            try {
+                await sendEmail({
+                    receiverEmail: email,
+                    patientName: fullName,
+                    time: timeString,
+                    language: language,
+                    doctorName: doctorName,
+                    redirectLink: "https://www.youtube.com/watch?v=0GL--Adfqhc&list=PLncHg6Kn2JT6E38Z3kit9Hnif1xC_9VqI&index=97"
+                });
+            } catch (e) { console.error('Send email failed:', e); }
 
             resolve({
                 errCode: 0,

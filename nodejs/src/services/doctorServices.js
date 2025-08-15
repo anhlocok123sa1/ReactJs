@@ -273,7 +273,9 @@ let getDoctorSchedule = (data) => {
                             model: db.Allcode,
                             as: 'timeTypeData',
                             attributes: ['valueEn', 'valueVi'],
-                        }
+                        },
+                        { model: db.User, as: 'doctorData', attributes: ['firstName', 'lastName'] },
+
                     ],
                     raw: false,
                     nest: true,
@@ -339,5 +341,5 @@ module.exports = {
     getDetailDoctor: getDetailDoctor,
     bulkCreateSchedule: bulkCreateSchedule,
     getDoctorSchedule: getDoctorSchedule,
-    getExtraInfoDoctorById: getExtraInfoDoctorById
+    getExtraInfoDoctorById: getExtraInfoDoctorById,
 }
