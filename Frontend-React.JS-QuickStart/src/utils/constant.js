@@ -1,24 +1,25 @@
 export const path = {
     HOME: '/',
-    HOMEPAGE:'/home',
+    HOMEPAGE: '/home',
     LOGIN: '/login',
     LOG_OUT: '/logout',
     SYSTEM: '/system',
     DETAIL_DOCTOR: '/detail-doctor/:id',
     DOCTOR: '/doctor',
+    VERIFY_EMAIL_BOOKING: '/verify-booking'
 };
 
 export const LANGUAGES = {
     VI: 'vi',
     EN: 'en'
 };
- 
+
 export const CRUD_ACTIONS = {
     ADD: "ADD",
     EDIT: "EDIT",
     DELETE: "DELETE",
     CREATE: "CREATE",
-    READ:"READ"
+    READ: "READ"
 };
 
 export const dateFormat = {

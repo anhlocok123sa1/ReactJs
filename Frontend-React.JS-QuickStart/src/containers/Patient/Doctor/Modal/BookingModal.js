@@ -24,11 +24,21 @@ class BookingModal extends Component {
             address: '',
             reason: '',
             birthday: '',
-            genders: '',
+            genders: [],
             doctorId: '',
-            selectedGender: '',
+            selectedGender: null,
+            errors: {}
         }
     }
+    validate = () => {
+        const errors = {};
+        const { fullName, phoneNumber, email, selectedGender } = this.state;
+        if (!fullName) errors.fullName = 'Vui lòng nhập họ tên';
+        if (!email) errors.email = 'Vui lòng nhập email';
+        if (!phoneNumber) errors.phoneNumber = 'Vui lòng nhập số điện thoại';
+        if (!selectedGender) errors.selectedGender = 'Vui lòng chọn giới tính';
+        return errors;
+    };
 
     componentDidMount() {
         this.props.getGenders();
@@ -54,25 +64,37 @@ class BookingModal extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.language !== this.props.language) {
-            this.setState({
-                genders: this.buildDataGender(this.props.genders),
-                selectedGender: this.buildDataGender(this.props.genders)[0],
-            })
+        if (prevProps.language !== this.props.language || prevProps.genders !== this.props.genders) {
+            const genders = this.buildDataGender(this.props.genders);
+            this.setState(prev => ({
+                genders,
+                selectedGender: prev.selectedGender
+                    ? genders.find(g => g.value === prev.selectedGender.value) || genders[0]
+                    : (genders[0] || null)
+            }));
         }
-        if (prevProps.genders !== this.props.genders) {
-            this.setState({
-                genders: this.buildDataGender(this.props.genders)
-            })
-        }
-        if (prevProps.dataTime !== this.props.dataTime && this.props.dataTime && !_.isEmpty(this.props.dataTime)) {
-            if (this.props.dataTime && !_.isEmpty(this.props.dataTime)) {
-                let { doctorId } = this.props.dataTime;
 
-                this.setState({
-                    doctorId
-                })
-            }
+        if (prevProps.dataTime !== this.props.dataTime && this.props.dataTime && !_.isEmpty(this.props.dataTime)) {
+            this.setState({ doctorId: this.props.dataTime.doctorId });
+        }
+        if (
+            prevProps.isLoadingPatientBookingAppointment &&
+            !this.props.isLoadingPatientBookingAppointment &&
+            this.props.patientBookingAppointment
+        ) {
+            // reset form
+            this.setState({
+                fullName: '',
+                phoneNumber: '',
+                email: '',
+                address: '',
+                reason: '',
+                birthday: '',
+                selectedGender: this.state.genders?.[0] || null,
+                errors: {},
+            });
+            // đóng modal
+            this.props.closeBookingModal?.();
         }
     }
 
@@ -95,32 +117,50 @@ class BookingModal extends Component {
         this.setState({ selectedGender: selectedOption })
     }
 
-    handleConfirmBooking = () => {
-        // console.log("Check state hit confirm: ", this.state);
-        let { dataTime, language } = this.props;
-        let doctorId = dataTime?.doctorId || '';
-        let timeType = dataTime?.timeType || '';
-        let date = dataTime?.date || '';
-        let { fullName, phoneNumber, email, address, reason, birthday, selectedGender } = this.state
-        let timeString = this.buildTimeBooking(dataTime);
-        let doctorName = this.buildDoctorName(dataTime)
+    handleConfirmBooking = async () => {
+        const errors = this.validate();
+        if (Object.keys(errors).length) {
+            this.setState({ errors });
+            return;
+        }
 
-        this.props.savePatientBookingAppointment({
+        const { dataTime, language } = this.props;
+        if (!dataTime || !dataTime.doctorId || !dataTime.timeType || !dataTime.date) return;
+
+        const {
+            fullName, phoneNumber, email, address, reason, birthday, selectedGender
+        } = this.state;
+
+        const timeString = this.buildTimeBooking(dataTime);
+        const doctorName = this.buildDoctorName(dataTime);
+
+        const payload = {
             fullName,
             phoneNumber,
             email,
             address,
             reason,
-            birthday,
-            selectedGender,
-            doctorId,
-            timeType,
-            date,
+            // birthday: Date (ms) hoặc chuỗi ISO — tùy bạn; dưới đây convert ms
+            birthday: birthday ? new Date(birthday).getTime() : null,
+            selectedGender: selectedGender?.value, // CHỈ GỬI value ('M','F','O'…)
+            doctorId: dataTime.doctorId,
+            timeType: dataTime.timeType,
+            date: dataTime.date,         // ms (startOf('day')) như bạn đang làm
             language,
             timeString,
             doctorName
-        });
-    }
+        };
+
+        try {
+            this.setState({ isSubmitting: true });
+            await this.props.savePatientBookingAppointment(payload);
+            // Có thể toast thành công và đóng modal
+            // toast.success('Đặt lịch thành công, vui lòng kiểm tra email để xác nhận');
+            // this.props.closeBookingModal();
+        } finally {
+            this.setState({ isSubmitting: false });
+        }
+    };
 
     buildTimeBooking = (dataTime) => {
         let { language } = this.props
@@ -239,11 +279,13 @@ class BookingModal extends Component {
                         <button
                             className="btn btn-primary"
                             onClick={() => this.handleConfirmBooking()}
+                            disabled={this.props.isLoadingPatientBookingAppointment}
                         >
-                            <FormattedMessage
-                                id="patient.booking.confirm"
-                                defaultMessage="Xác nhận"
-                            />
+                            {this.props.isLoadingPatientBookingAppointment ? (
+                                <i className="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                            ) : (
+                                <FormattedMessage id="patient.booking.confirm" defaultMessage="Xác nhận" />
+                            )}
                         </button>
                         <button className="btn btn-secondary" onClick={closeBookingModal}>
                             <FormattedMessage id="patient.booking.cancel" defaultMessage="Hủy" />
@@ -258,7 +300,8 @@ class BookingModal extends Component {
 const mapStateToProps = (state) => ({
     language: state.app.language,
     genders: state.admin.genders,
-    patientBookingAppointment: state.admin.patientBookingAppointment
+    patientBookingAppointment: state.admin.patientBookingAppointment,
+    isLoadingPatientBookingAppointment: state.admin.isLoadingPatientBookingAppointment,
 });
 
 const mapDispatchToProps = dispatch => {

@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes';
-import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices, getExtraInfoDoctorById, postPatientBookingAppointment } from '../../services/userService';
+import { getAllCodeServices, createNewUserServices, getAllUsers, deleteUserServices, editUserServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices, getExtraInfoDoctorById, postPatientBookingAppointment, postVerifyBookingAppointmentServices } from '../../services/userService';
 import { toast } from 'react-toastify';
 
 // GENDER
@@ -481,3 +481,54 @@ export const savePatientBookingAppointmentSuccess = (data) => ({
 export const savePatientBookingAppointmentFailed = () => ({
     type: actionTypes.SAVE_PATIENT_BOOKING_APPOINTMENT_FAILED
 });
+
+//POST VERIFY BOOK APPOINTMENT
+// actions
+export const postVerifyBookAppointment = (data) => {
+    return async (dispatch) => {
+        try {
+            dispatch({ type: actionTypes.POST_VERIFY_BOOK_APPOINTMENT_START });
+
+            const res = await postVerifyBookingAppointmentServices(data);
+            // Backend trả: { errCode, errMessage, data }
+
+            // Thông báo tuỳ theo errCode
+            if (res?.errCode === 0) {
+                // Có thể là “Verify booking success” hoặc “Appointment already verified”
+                // Dùng đúng errMessage backend gửi về
+                toast.success(res.errMessage || 'Verify booking success!');
+            } else if (res?.errCode === 2) {
+                toast.warn(res.errMessage || 'Appointment not found or token is invalid');
+            } else if (res?.errCode === 3) {
+                toast.info(res.errMessage || 'Appointment is not pending verification');
+            } else {
+                toast.error(res?.errMessage || 'Verification failed');
+            }
+
+            // ✅ Dispatch payload đầy đủ (dùng cho UI)
+            dispatch({
+                type: actionTypes.POST_VERIFY_BOOK_APPOINTMENT_SUCCESS,
+                payload: res
+            });
+        } catch (e) {
+            console.error('postVerifyBookAppointment error:', e);
+            toast.error('Server error');
+            dispatch({
+                type: actionTypes.POST_VERIFY_BOOK_APPOINTMENT_FAILED,
+                payload: { errCode: -1, errMessage: 'Error from server' }
+            });
+        }
+    };
+};
+
+// giữ nguyên creators nếu bạn muốn, chỉ đổi field thành `payload`
+export const postVerifyBookAppointmentSuccess = (payload) => ({
+    type: actionTypes.POST_VERIFY_BOOK_APPOINTMENT_SUCCESS,
+    payload
+});
+
+export const postVerifyBookAppointmentFailed = (payload) => ({
+    type: actionTypes.POST_VERIFY_BOOK_APPOINTMENT_FAILED,
+    payload
+});
+

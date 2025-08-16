@@ -1,0 +1,50 @@
+.verify-email {
+    margin-top: 40px;
+    text-align: center;
+
+    &__box {
+        display         : inline-block;
+        padding         : 30px 40px;
+        border-radius   : 8px;
+        background-color: #f9f9f9;
+        box-shadow      : 0 2px 6px rgba(0, 0, 0, 0.15);
+        max-width       : 600px;
+        width           : 100%;
+        margin          : 0 auto;
+        animation       : fadeIn 0.5s ease-in-out;
+
+        &--success {
+            border          : 2px solid #28a745;
+            background-color: #eaf9f0;
+        }
+
+        &--fail {
+            border          : 2px solid #dc3545;
+            background-color: #fceaea;
+        }
+    }
+
+    &__title {
+        font-size    : 22px;
+        font-weight  : 600;
+        margin-bottom: 10px;
+        color        : #333;
+    }
+
+    &__desc {
+        font-size: 16px;
+        color    : #555;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity  : 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity  : 1;
+        transform: translateY(0);
+    }
+}

@@ -27,6 +27,8 @@ const initialState = {
     extraDoctorInfo: [],
     isLoadingPatientBookingAppointment: false,
     patientBookingAppointment: [],
+    isLoadingPostVerifyBookAppointment: false,
+    verifyBookAppointment: null,
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -395,6 +397,35 @@ const adminReducer = (state = initialState, action) => {
                 ...copyState,
             };
         }
+        //POST VERIFY BOOK APPOINTMENT
+        case actionTypes.POST_VERIFY_BOOK_APPOINTMENT_START: {
+            let copyState = { ...state };
+            copyState.isLoadingPostVerifyBookAppointment = true;
+            copyState.verifyBookAppointment = null;
+            // console.log('post verify book appointment start: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.POST_VERIFY_BOOK_APPOINTMENT_SUCCESS: {
+            let copyState = { ...state };
+            copyState.isLoadingPostVerifyBookAppointment = false;
+            copyState.verifyBookAppointment = action.payload;
+            // console.log('post verify book appointment success: ', action);
+            return {
+                ...copyState,
+            };
+        }
+        case actionTypes.POST_VERIFY_BOOK_APPOINTMENT_FAILED: {
+            let copyState = { ...state };
+            copyState.isLoadingPostVerifyBookAppointment = false;
+            copyState.verifyBookAppointment = action.payload || { errCode: -1, errMessage: 'Error from server' };
+            // console.log('post verify book appointment failed: ', copyState);
+            return {
+                ...copyState,
+            };
+        }
+
 
         default:
             return state;

@@ -132,6 +132,7 @@ let saveVerifyBookAppointment = (data) => {
                 },
                 transaction: t,
                 lock: t.LOCK.UPDATE,
+                raw:false,
             });
 
             if (!booking) {
