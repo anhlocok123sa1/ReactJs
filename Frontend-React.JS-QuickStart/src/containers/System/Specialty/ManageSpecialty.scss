@@ -1,0 +1,29 @@
+.manage-specialty-container {
+    padding: 20px;
+
+    .manage-specialty-title {
+        font-size    : 22px;
+        font-weight  : 600;
+        margin-bottom: 16px;
+    }
+
+    .btn-save-specialty {
+        min-width : 140px;
+        margin-top: 16px;
+    }
+
+    .preview-wrapper {
+        .preview-image {
+            display      : block;
+            width        : 220px;
+            height       : 140px;
+            object-fit   : contain;
+            border-radius: 8px;
+            border       : 1px solid #e5e7eb;
+        }
+    }
+
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+}
