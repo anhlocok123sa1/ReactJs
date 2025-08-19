@@ -1,5 +1,6 @@
+// src/containers/System/Specialty/ManageSpecialty.jsx
 import React, { Component } from 'react';
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import './ManageSpecialty.scss';
 import { CommonUtils } from '../../../utils';
@@ -20,24 +21,47 @@ class ManageSpecialty extends Component {
       previewImageUrl: '',
       errors: {},
     };
+    // Dùng ref để reset input file sau khi lưu
+    this.fileInputRef = React.createRef();
   }
 
   componentDidUpdate(prevProps) {
-    // Khi tạo chuyên khoa xong (errCode === 0) thì reset form
+    // Reset form khi lưu thành công
     if (prevProps.createSpecialtyResult !== this.props.createSpecialtyResult) {
       const res = this.props.createSpecialtyResult;
       if (res && res.errCode === 0) {
-        this.setState({
-          name: '',
-          imageBase64: '',
-          descriptionHTML: '',
-          descriptionMarkdown: '',
-          previewImageUrl: '',
-          errors: {},
-        });
+        this.resetForm();
       }
     }
   }
+
+  componentWillUnmount() {
+    // Giải phóng URL xem trước khi unmount
+    if (this.state.previewImageUrl) {
+      URL.revokeObjectURL(this.state.previewImageUrl);
+    }
+  }
+
+  resetForm = () => {
+    // Giải phóng URL xem trước cũ (nếu có)
+    if (this.state.previewImageUrl) {
+      URL.revokeObjectURL(this.state.previewImageUrl);
+    }
+
+    // Xoá giá trị input file để có thể chọn lại cùng 1 file
+    if (this.fileInputRef.current) {
+      this.fileInputRef.current.value = '';
+    }
+
+    this.setState({
+      name: '',
+      imageBase64: '',
+      descriptionHTML: '',
+      descriptionMarkdown: '',
+      previewImageUrl: '',
+      errors: {},
+    });
+  };
 
   handleOnchangeInput = (event, id) => {
     this.setState({ [id]: event.target.value });
@@ -53,11 +77,19 @@ class ManageSpecialty extends Component {
   handleOnChangeImage = async (event) => {
     const file = event?.target?.files?.[0];
     if (!file) return;
+
+    // Giải phóng URL cũ để tránh leak
+    if (this.state.previewImageUrl) {
+      URL.revokeObjectURL(this.state.previewImageUrl);
+    }
+
     const base64 = await CommonUtils.getBase64(file);
     const previewUrl = URL.createObjectURL(file);
+
     this.setState({
       imageBase64: base64,
       previewImageUrl: previewUrl,
+      errors: { ...this.state.errors, imageBase64: undefined },
     });
   };
 
@@ -77,19 +109,15 @@ class ManageSpecialty extends Component {
 
     this.props.createNewSpecialty({
       name,
-      imageBase64,            // backend của bạn đang nhận field này
+      imageBase64, // backend nhận field này
       descriptionHTML,
       descriptionMarkdown,
     });
+    this.resetForm();
   };
 
   render() {
-    const {
-      name,
-      descriptionMarkdown,
-      previewImageUrl,
-      errors,
-    } = this.state;
+    const { name, descriptionMarkdown, previewImageUrl, errors } = this.state;
     const { isCreatingSpecialty } = this.props;
 
     return (
@@ -112,12 +140,15 @@ class ManageSpecialty extends Component {
           <div className="col-6 form-group">
             <label>Ảnh chuyên khoa</label>
             <input
+              ref={this.fileInputRef}
               type="file"
               accept="image/*"
               className={`form-control ${errors.imageBase64 ? 'is-invalid' : ''}`}
               onChange={this.handleOnChangeImage}
             />
-            {errors.imageBase64 && <div className="invalid-feedback d-block">{errors.imageBase64}</div>}
+            {errors.imageBase64 && (
+              <div className="invalid-feedback d-block">{errors.imageBase64}</div>
+            )}
 
             {previewImageUrl ? (
               <div className="preview-wrapper mt-2">
@@ -163,4 +194,7 @@ const mapDispatchToProps = (dispatch) => ({
   createNewSpecialty: (data) => dispatch(actions.createNewSpecialty(data)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ManageSpecialty));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(ManageSpecialty));

@@ -15,7 +15,7 @@ import {
     postPatientBookingAppointment,
     postVerifyBookingAppointmentServices,
     createNewSpecialtyServices,
-    handleLoginApi
+    getAllSpecialtysServices
 } from '../../services/userService';
 import { toast } from 'react-toastify';
 
@@ -523,4 +523,28 @@ export const createNewSpecialtyFailed = (payload) => ({
     payload
 });
 
+// ================== FETCH ALL SPECIALTY ==================
+export const fetchAllSpecialty = () => {
+    return async (dispatch) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_ALL_SPECIALTY_START });
+            let res = await getAllSpecialtysServices();
+            if (res && res.errCode === 0) {
+                dispatch(fetchAllSpecialtySuccess(res.data));
+            } else {
+                dispatch(fetchAllSpecialtyFailed());
+            }
+        } catch (e) {
+            dispatch(fetchAllSpecialtyFailed());
+            console.error('fetch all specialty error:', e);
+        }
+    };
+}
+export const fetchAllSpecialtySuccess = (data) => ({
+    type: actionTypes.FETCH_ALL_SPECIALTY_SUCCESS,
+    data
+}); 
+export const fetchAllSpecialtyFailed = () => ({
+    type: actionTypes.FETCH_ALL_SPECIALTY_FAILED
+});
 

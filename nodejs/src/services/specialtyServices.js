@@ -28,6 +28,33 @@ let createSpecialty = (data) => {
     });
 };
 
+let getAllSpecialty = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let specialties = await db.Specialty.findAll();
+            if (specialties && specialties.length > 0) {
+                specialties = specialties.map(item => {
+                    return {
+                        ...item,
+                        image: Buffer.from(item.image, 'base64').toString('binary') // Convert base64 to binary
+                    };
+                }
+                );
+            }
+            if (!specialties) {
+                specialties = [];
+            }
+            return resolve({
+                errCode: 0,
+                errMessage: 'OK',
+                data: specialties
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
 module.exports = {
-    createSpecialty
+    createSpecialty, getAllSpecialty
 };

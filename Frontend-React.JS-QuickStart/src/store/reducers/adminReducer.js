@@ -29,10 +29,10 @@ const initialState = {
     patientBookingAppointment: [],
     isLoadingPostVerifyBookAppointment: false,
     verifyBookAppointment: null,
-
-    // SPECIALTY
     isCreatingSpecialty: false,
     createSpecialtyResult: null,
+    isLoadingAllSpecialty: false,
+    allSpecialty: []
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -181,7 +181,7 @@ const adminReducer = (state = initialState, action) => {
                 verifyBookAppointment: action.payload || { errCode: -1, errMessage: 'Error from server' }
             };
 
-        // SPECIALTY
+        // CREATE SPECIALTY
         case actionTypes.CREATE_NEW_SPECIALTY_START:
             return { ...state, isCreatingSpecialty: true, createSpecialtyResult: null };
 
@@ -194,6 +194,13 @@ const adminReducer = (state = initialState, action) => {
                 isCreatingSpecialty: false,
                 createSpecialtyResult: action.data || { errCode: -1, errMessage: 'Error' }
             };
+        // FETCH ALL SPECIALTY
+        case actionTypes.FETCH_ALL_SPECIALTY_START:
+            return { ...state, isLoadingAllSpecialty: true, allSpecialty: [] };
+        case actionTypes.FETCH_ALL_SPECIALTY_SUCCESS:
+            return { ...state, isLoadingAllSpecialty: false, allSpecialty: action.data };
+        case actionTypes.FETCH_ALL_SPECIALTY_FAILED:
+            return { ...state, isLoadingAllSpecialty: false, allSpecialty: [] };
 
         default:
             return state;
