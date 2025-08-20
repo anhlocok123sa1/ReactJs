@@ -66,11 +66,13 @@ let saveInfoDoctor = async (data) => {
         const {
             contentMarkdown, contentHTML, actions, doctorId, description,
             selectedPrice, selectedPayment, selectedProvince,
-            nameClinic, addressClinic, note
+            nameClinic, addressClinic, note, specialtyId, clinicId
         } = data;
 
         // Kiểm tra dữ liệu bắt buộc
-        if (!contentMarkdown || !contentHTML || !actions || !doctorId) {
+        if (!contentMarkdown || !contentHTML || !actions || !doctorId || !description ||
+            !selectedPrice || !selectedPayment || !selectedProvince ||
+            !nameClinic || !addressClinic || !specialtyId || !clinicId) {
             return {
                 errCode: 1,
                 errMessage: 'Missing required parameters'
@@ -113,6 +115,8 @@ let saveInfoDoctor = async (data) => {
             doctorInfo.nameClinic = nameClinic;
             doctorInfo.addressClinic = addressClinic;
             doctorInfo.note = note;
+            doctorInfo.specialtyId = specialtyId;
+            doctorInfo.clinicId = clinicId;
             await doctorInfo.save();
         } else {
             // Create
@@ -123,7 +127,9 @@ let saveInfoDoctor = async (data) => {
                 provinceId: selectedProvince,
                 nameClinic,
                 addressClinic,
-                note
+                note,
+                specialtyId,
+                clinicId
             });
         }
 

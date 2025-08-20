@@ -1,0 +1,59 @@
+// File: src/styles/_skeleton.scss
+// Only skeleton shimmer + containers. No overrides to existing UI.
+
+$sk-base: rgba(0, 0, 0, 0.06);
+$sk-mid: rgba(0, 0, 0, 0.12);
+
+@keyframes sk-shimmer {
+  0% { background-position: -480px 0; }
+  100% { background-position: 480px 0; }
+}
+
+// Shimmer primitives
+.skeleton-card,
+.skeleton-line,
+.skeleton-avatar {
+  background: linear-gradient(90deg, $sk-base 25%, $sk-mid 37%, $sk-base 63%);
+  background-size: 800px 100%;
+  animation: sk-shimmer 1.2s infinite linear;
+}
+
+// Loading containers used only when loading (keeps your UI untouched otherwise)
+.specialty-loading,
+.doctor-loading,
+.generic-loading {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+}
+
+// Default card placeholder (safe dimensions for your current slides)
+.skeleton-card {
+  flex: 1 1 0;
+  height: 260px;
+  border-radius: 12px;
+}
+
+// A thin line placeholder if needed elsewhere
+.skeleton-line {
+  width: 100%;
+  height: 12px;
+  border-radius: 6px;
+}
+
+// A circular avatar placeholder if needed for doctor items
+.skeleton-avatar {
+  width: 221px;
+  height: 221px;
+  border-radius: 50%;
+}
+
+@media (max-width: 992px) { .skeleton-card { height: 220px; } }
+@media (max-width: 576px) {
+  .specialty-loading, .doctor-loading, .generic-loading { gap: 12px; }
+}
+
+// Accessibility: disable animation for users who prefer reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-card, .skeleton-line, .skeleton-avatar { animation: none; }
+}

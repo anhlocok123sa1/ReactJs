@@ -381,11 +381,17 @@ export const getRequiredDoctorInfo = () => {
             let resPrice = await getAllCodeServices("PRICE");
             let resPayment = await getAllCodeServices("PAYMENT");
             let resProvince = await getAllCodeServices("PROVINCE");
-            if (resPrice?.errCode === 0 && resPayment?.errCode === 0 && resProvince?.errCode === 0) {
+            let resSpecialty = await getAllSpecialtysServices();
+            if (resPrice?.errCode === 0 
+                && resPayment?.errCode === 0 
+                && resProvince?.errCode === 0
+                && resSpecialty?.errCode === 0
+            ) {
                 dispatch(getRequiredDoctorInfoSuccess({
                     resPrice: resPrice.data,
                     resPayment: resPayment.data,
-                    resProvince: resProvince.data
+                    resProvince: resProvince.data,
+                    resSpecialty: resSpecialty.data
                 }));
             } else {
                 dispatch(getRequiredDoctorInfoFailed());

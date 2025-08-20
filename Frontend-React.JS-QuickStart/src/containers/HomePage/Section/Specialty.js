@@ -9,7 +9,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import * as actions from '../../../store/actions';
-
+import { path } from '../../../utils/constant';
 import specialtyImg from '../../../assets/specialty/iStock-1366650119.jpg';
 
 class Specialty extends Component {
@@ -33,7 +33,8 @@ class Specialty extends Component {
     // Điều hướng sang trang chi tiết chuyên khoa
     handleOnClick = (item) => {
         if (this.props.history && item?.id) {
-            this.props.history.push(`/detail-specialty/${item.id}`);
+            const detailPath = path.DETAIL_SPECIALTY.replace(':id', item.id);
+            this.props.history.push(detailPath);
         }
     };
 
