@@ -276,10 +276,11 @@ export const saveInfoDoctorFailed = () => ({
 export const getDetailDoctorAction = (id) => {
     return async (dispatch) => {
         try {
-            dispatch({ type: actionTypes.GET_DETAIL_DOCTOR_START });
+            dispatch({ type: actionTypes.GET_DETAIL_DOCTOR_START ,  doctorId: id });
             let res = await getDetailsDoctorServices(id);
+
             if (res && res.errCode === 0) {
-                dispatch(getDetailDoctorSuccess(res.data));
+                dispatch(getDetailDoctorSuccess(res.data, id));
             } else {
                 dispatch(getDetailDoctorFailed());
             }
@@ -289,9 +290,10 @@ export const getDetailDoctorAction = (id) => {
         }
     };
 };
-export const getDetailDoctorSuccess = (data) => ({
+export const getDetailDoctorSuccess = (data, id) => ({
     type: actionTypes.GET_DETAIL_DOCTOR_SUCCESS,
-    data
+    data,
+    doctorId: id
 });
 export const getDetailDoctorFailed = () => ({
     type: actionTypes.GET_DETAIL_DOCTOR_FAILED
@@ -382,8 +384,8 @@ export const getRequiredDoctorInfo = () => {
             let resPayment = await getAllCodeServices("PAYMENT");
             let resProvince = await getAllCodeServices("PROVINCE");
             let resSpecialty = await getAllSpecialtysServices();
-            if (resPrice?.errCode === 0 
-                && resPayment?.errCode === 0 
+            if (resPrice?.errCode === 0
+                && resPayment?.errCode === 0
                 && resProvince?.errCode === 0
                 && resSpecialty?.errCode === 0
             ) {
@@ -414,10 +416,10 @@ export const getRequiredDoctorInfoFailed = () => ({
 export const getExtraDoctorInfo = (doctorId) => {
     return async (dispatch) => {
         try {
-            dispatch({ type: actionTypes.FETCH_EXTRA_DOCTOR_INFO_START });
+            dispatch({ type: actionTypes.FETCH_EXTRA_DOCTOR_INFO_START, doctorId });
             let res = await getExtraInfoDoctorById(doctorId);
             if (res && res.errCode === 0) {
-                dispatch(getExtraDoctorInfoSuccess(res.data));
+                dispatch(getExtraDoctorInfoSuccess(res.data, doctorId));
             } else {
                 dispatch(getExtraDoctorInfoFailed());
             }
@@ -427,9 +429,10 @@ export const getExtraDoctorInfo = (doctorId) => {
         }
     };
 };
-export const getExtraDoctorInfoSuccess = (data) => ({
+export const getExtraDoctorInfoSuccess = (data, doctorId) => ({
     type: actionTypes.FETCH_EXTRA_DOCTOR_INFO_SUCCESS,
-    data
+    data,
+    doctorId
 });
 export const getExtraDoctorInfoFailed = () => ({
     type: actionTypes.FETCH_EXTRA_DOCTOR_INFO_FAILED
@@ -549,7 +552,7 @@ export const fetchAllSpecialty = () => {
 export const fetchAllSpecialtySuccess = (data) => ({
     type: actionTypes.FETCH_ALL_SPECIALTY_SUCCESS,
     data
-}); 
+});
 export const fetchAllSpecialtyFailed = () => ({
     type: actionTypes.FETCH_ALL_SPECIALTY_FAILED
 });

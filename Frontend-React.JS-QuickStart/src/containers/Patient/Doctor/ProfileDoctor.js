@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom';
 import './ProfileDoctor.scss';
 import { LANGUAGES } from '../../../utils'
-// import * as actions from '../../../store/actions';
+import * as actions from '../../../store/actions';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import NumberFormat from 'react-number-format'
@@ -15,12 +15,15 @@ class ProfileDoctor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            detailDoctor: {}
         };
     }
 
     componentDidMount() {
-
+        if (this.props.doctorId) {
+            this.props.getDetailDoctor(this.props.doctorId);
+            this.props.getExtraDoctorInfo(this.props.doctorId);
+        }
     }
     renderTimeBooking = (dataTime, language) => {
         if (dataTime && !_.isEmpty(dataTime)) {
@@ -82,6 +85,12 @@ class ProfileDoctor extends Component {
         if (prevProps.language !== this.props.language) {
             this.buildTimeBooking(this.props.dataTime, this.props.language)
         }
+        if (prevProps.doctorId !== this.props.doctorId) {
+            console.log('Doctor ID changed:', this.props.doctorId);
+
+            this.props.getDetailDoctor(this.props.doctorId);
+            this.props.getExtraDoctorInfo(this.props.doctorId);
+        }
     }
     capitalizeFirstLetter = (val) => {
         return String(val).charAt(0).toUpperCase() + String(val).slice(1);
@@ -105,6 +114,7 @@ class ProfileDoctor extends Component {
 
 
     render() {
+
         let { detailDoctor, language, isShowDescriptionDoctor, dataTime, extraDoctorInfo } = this.props;
         let nameVi = '', nameEn = '';
         if (detailDoctor && detailDoctor.positionData) {
@@ -147,16 +157,19 @@ class ProfileDoctor extends Component {
 }
 
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
     return {
         language: state.app.language,
-        detailDoctor: state.admin.detailDoctor,
-        extraDoctorInfo: state.admin.extraDoctorInfo
+        detailDoctor: state.admin.detailDoctorById?.[ownProps.doctorId],
+        extraDoctorInfo: state.admin.extraDoctorInfoById?.[ownProps.doctorId],
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        getDetailDoctor: (data) => dispatch(actions.getDetailDoctorAction(data)),
+        getExtraDoctorInfo: (doctorId) => dispatch(actions.getExtraDoctorInfo(doctorId))
+
     };
 };
 
