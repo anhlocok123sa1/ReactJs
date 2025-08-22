@@ -39,7 +39,7 @@ class ManageDoctor extends Component {
       addressClinic: '',
       note: '',
 
-      // NEW: specialty & clinic
+      // specialty & clinic
       listSpecialty: [],
       listClinic: [],
       selectedSpecialty: '',
@@ -49,78 +49,56 @@ class ManageDoctor extends Component {
 
   componentDidMount() {
     this.props.fetchAllDoctors();
+    // Lấy toàn bộ dữ liệu cần thiết (price/payment/province/specialty/clinic) từ 1 API
     this.props.getRequiredDoctorInfo();
-    // NEW: fetch specialty & clinic
-    if (this.props.fetchAllSpecialty) this.props.fetchAllSpecialty();
-    if (this.props.fetchAllClinic) this.props.fetchAllClinic();
   }
 
   componentDidUpdate(prevProps) {
     const { allDoctors, language, allRequiredDoctorInfo, detailDoctor } = this.props;
 
-    // 1) doctors list
+    // 1) Danh sách bác sĩ
     if (prevProps.allDoctors !== allDoctors) {
-      const dataSelect = this.buildDataInputSelect(allDoctors, 'USERS');
-      this.setState({ listDoctors: dataSelect });
+      this.setState({ listDoctors: this.buildDataInputSelect(allDoctors, 'USERS') });
     }
 
-    // 2) required doctor info (price/payment/province) -> when payload changes
+    // 2) Bộ dữ liệu dùng chung (giá/thanh toán/tỉnh + specialty/clinic)
     if (prevProps.allRequiredDoctorInfo !== allRequiredDoctorInfo) {
-      const { resPayment, resPrice, resProvince, resSpecialty } = allRequiredDoctorInfo || {};
+      const { resPayment, resPrice, resProvince, resSpecialty, resClinic } = allRequiredDoctorInfo || {};
       this.setState({
         listPrice: this.buildDataInputSelect(resPrice, 'PRICE'),
         listPayment: this.buildDataInputSelect(resPayment, 'PAYMENT'),
         listProvince: this.buildDataInputSelect(resProvince, 'PROVINCE'),
         listSpecialty: this.buildDataInputSelect(resSpecialty, 'SPECIALTY'),
+        listClinic: this.buildDataInputSelect(resClinic, 'CLINIC'),
       });
     }
 
-    // 3) specialty & clinic lists (from Redux)
-    if (
-      prevProps.allSpecialty !== this.props.allSpecialty ||
-      prevProps.allClinics !== this.props.allClinics ||
-      prevProps.allClinic !== this.props.allClinic
-    ) {
-      const clinicsRaw = this.props.allClinics || this.props.allClinic || [];
-      this.setState({
-        listSpecialty: this.buildDataInputSelect(this.props.allSpecialty, 'SPECIALTY'),
-        listClinic: this.buildDataInputSelect(clinicsRaw, 'CLINIC'),
-      });
-    }
-
-    // 4) language changed -> rebuild all select options (labels)
+    // 3) Đổi ngôn ngữ -> build lại label
     if (prevProps.language !== language) {
-      const { resPayment, resPrice, resProvince } = allRequiredDoctorInfo || {};
-      const clinicsRaw = this.props.allClinics || this.props.allClinic || [];
+      const { resPayment, resPrice, resProvince, resSpecialty, resClinic } = allRequiredDoctorInfo || {};
       this.setState({
         listDoctors: this.buildDataInputSelect(allDoctors, 'USERS'),
         listPayment: this.buildDataInputSelect(resPayment, 'PAYMENT'),
         listPrice: this.buildDataInputSelect(resPrice, 'PRICE'),
         listProvince: this.buildDataInputSelect(resProvince, 'PROVINCE'),
-        listSpecialty: this.buildDataInputSelect(this.props.allSpecialty, 'SPECIALTY'),
-        listClinic: this.buildDataInputSelect(clinicsRaw, 'CLINIC'),
+        listSpecialty: this.buildDataInputSelect(resSpecialty, 'SPECIALTY'),
+        listClinic: this.buildDataInputSelect(resClinic, 'CLINIC'),
       });
 
-      // Also rebuild selected composite values for price/payment/province
+      // Cập nhật lại các giá trị selected (price/payment/province)
       if (detailDoctor) {
         const selectedPrice = (resPrice || []).find((i) => i.keyMap === detailDoctor?.DoctorInfoData?.priceId);
         const selectedPayment = (resPayment || []).find((i) => i.keyMap === detailDoctor?.DoctorInfoData?.paymentId);
         const selectedProvince = (resProvince || []).find((i) => i.keyMap === detailDoctor?.DoctorInfoData?.provinceId);
         this.setState({
-          selectedPrice: selectedPrice
-            ? { label: language === LANGUAGES.VI ? selectedPrice.valueVi : selectedPrice.valueEn, value: selectedPrice.keyMap }
-            : '',
-          selectedPayment: selectedPayment
-            ? { label: language === LANGUAGES.VI ? selectedPayment.valueVi : selectedPayment.valueEn, value: selectedPayment.keyMap }
-            : '',
-          selectedProvince: selectedProvince
-            ? { label: language === LANGUAGES.VI ? selectedProvince.valueVi : selectedProvince.valueEn, value: selectedProvince.keyMap }
-            : '',
+          selectedPrice: selectedPrice ? { label: this.labelByLang(selectedPrice), value: selectedPrice.keyMap } : '',
+          selectedPayment: selectedPayment ? { label: this.labelByLang(selectedPayment), value: selectedPayment.keyMap } : '',
+          selectedProvince: selectedProvince ? { label: this.labelByLang(selectedProvince), value: selectedProvince.keyMap } : '',
         });
       }
     }
 
-    // 5) detail doctor loaded -> hydrate form
+    // 4) Khi chọn/đổi bác sĩ -> đổ dữ liệu chi tiết vào form
     if (prevProps.detailDoctor !== detailDoctor) {
       if (detailDoctor) {
         const { resPayment, resPrice, resProvince } = allRequiredDoctorInfo || {};
@@ -128,7 +106,7 @@ class ManageDoctor extends Component {
         const selectedPayment = (resPayment || []).find((i) => i.keyMap === detailDoctor?.DoctorInfoData?.paymentId);
         const selectedProvince = (resProvince || []).find((i) => i.keyMap === detailDoctor?.DoctorInfoData?.provinceId);
 
-        // NEW: specialty & clinic selected
+        // specialty & clinic dựa vào list hiện có
         const selectedSpecialtyOpt = (this.state.listSpecialty || []).find(
           (opt) => opt.value === detailDoctor?.DoctorInfoData?.specialtyId
         );
@@ -140,41 +118,20 @@ class ManageDoctor extends Component {
           contentMarkdown: detailDoctor?.markdownData?.contentMarkdown || '',
           contentHTML: detailDoctor?.markdownData?.contentHTML || '',
           description: detailDoctor?.markdownData?.description || '',
-          selectedPrice: selectedPrice
-            ? { label: this.labelByLang(selectedPrice), value: selectedPrice.keyMap }
-            : '',
-          selectedPayment: selectedPayment
-            ? { label: this.labelByLang(selectedPayment), value: selectedPayment.keyMap }
-            : '',
-          selectedProvince: selectedProvince
-            ? { label: this.labelByLang(selectedProvince), value: selectedProvince.keyMap }
-            : '',
+          selectedPrice: selectedPrice ? { label: this.labelByLang(selectedPrice), value: selectedPrice.keyMap } : '',
+          selectedPayment: selectedPayment ? { label: this.labelByLang(selectedPayment), value: selectedPayment.keyMap } : '',
+          selectedProvince: selectedProvince ? { label: this.labelByLang(selectedProvince), value: selectedProvince.keyMap } : '',
           nameClinic: detailDoctor?.DoctorInfoData?.nameClinic || '',
           addressClinic: detailDoctor?.DoctorInfoData?.addressClinic || '',
           note: detailDoctor?.DoctorInfoData?.note || '',
           selectedDoctor: (this.state.listDoctors || []).find((i) => i.value === detailDoctor.id) || null,
-          detailDoctor: detailDoctor,
+          detailDoctor,
           hasOldData: !!detailDoctor?.markdownData?.contentMarkdown,
           selectedSpecialty: selectedSpecialtyOpt || '',
-        //   selectedClinic: selectedClinicOpt || '',
+          selectedClinic: selectedClinicOpt || '',
         });
       } else {
-        this.setState({
-          contentMarkdown: '',
-          contentHTML: '',
-          description: '',
-          selectedPrice: '',
-          selectedPayment: '',
-          selectedProvince: '',
-          nameClinic: '',
-          addressClinic: '',
-          note: '',
-          selectedDoctor: null,
-          detailDoctor: {},
-          hasOldData: false,
-          selectedSpecialty: '',
-          selectedClinic: '',
-        });
+        this.resetForm();
       }
     }
   }
@@ -210,7 +167,6 @@ class ManageDoctor extends Component {
       return result;
     }
 
-    // NEW: specialty, clinic assume have `name`
     if (type === 'SPECIALTY' || type === 'CLINIC') {
       arr.forEach((item) => {
         result.push({ label: item.name, value: item.id });
@@ -219,6 +175,25 @@ class ManageDoctor extends Component {
     }
 
     return result;
+  };
+
+  resetForm = () => {
+    this.setState({
+      contentMarkdown: '',
+      contentHTML: '',
+      description: '',
+      selectedPrice: '',
+      selectedPayment: '',
+      selectedProvince: '',
+      nameClinic: '',
+      addressClinic: '',
+      note: '',
+      selectedDoctor: null,
+      detailDoctor: {},
+      hasOldData: false,
+      selectedSpecialty: '',
+      selectedClinic: '',
+    });
   };
 
   // Editors & inputs
@@ -252,10 +227,10 @@ class ManageDoctor extends Component {
       addressClinic,
       note,
       selectedSpecialty,
-    //   selectedClinic,
+      selectedClinic,
     } = this.state;
 
-    if (!selectedDoctor) return; // vì sao: tránh gửi thiếu doctorId
+    if (!selectedDoctor) return;
 
     this.props.saveInfoDoctor({
       contentMarkdown,
@@ -270,7 +245,7 @@ class ManageDoctor extends Component {
       addressClinic,
       note,
       specialtyId: selectedSpecialty?.value,
-    //   clinicId: selectedClinic?.value,
+      clinicId: selectedClinic?.value,
     });
   };
 
@@ -289,7 +264,6 @@ class ManageDoctor extends Component {
       nameClinic,
       addressClinic,
       note,
-      // NEW
       listSpecialty,
       listClinic,
       selectedSpecialty,
@@ -370,7 +344,6 @@ class ManageDoctor extends Component {
             />
           </div>
 
-          {/* NEW row: Specialty & Clinic */}
           <div className="col-4 form-group">
             <label>
               <FormattedMessage id="admin.manage-doctor.specialty" />
@@ -432,10 +405,7 @@ const mapStateToProps = (state) => ({
   isLoggedIn: state.user.isLoggedIn,
   language: state.app.language,
   detailDoctor: state.admin.detailDoctor,
-  allRequiredDoctorInfo: state.admin.allRequiredDoctorInfo,
-  allSpecialty: state.admin.allSpecialty,
-//   allClinics: state.admin.allClinics,
-//   allClinic: state.admin.allClinic,
+  allRequiredDoctorInfo: state.admin.allRequiredDoctorInfo, // cần chứa resSpecialty, resClinic
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -443,8 +413,6 @@ const mapDispatchToProps = (dispatch) => ({
   getRequiredDoctorInfo: () => dispatch(actions.getRequiredDoctorInfo()),
   saveInfoDoctor: (data) => dispatch(actions.saveInfoDoctorAction(data)),
   getDetailDoctor: (id) => dispatch(actions.getDetailDoctorAction(id)),
-  fetchAllSpecialty: () => dispatch(actions.fetchAllSpecialty()),
-//   fetchAllClinic: () => dispatch(actions.fetchAllClinic && actions.fetchAllClinic()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageDoctor);

@@ -66,13 +66,14 @@ let saveInfoDoctor = async (data) => {
         const {
             contentMarkdown, contentHTML, actions, doctorId, description,
             selectedPrice, selectedPayment, selectedProvince,
-            nameClinic, addressClinic, note, specialtyId, clinicId
+            nameClinic, addressClinic, note, specialtyId,
         } = data;
 
         // Kiểm tra dữ liệu bắt buộc
         if (!contentMarkdown || !contentHTML || !actions || !doctorId || !description ||
             !selectedPrice || !selectedPayment || !selectedProvince ||
-            !nameClinic || !addressClinic || !specialtyId || !clinicId) {
+            !nameClinic || !addressClinic || !specialtyId // || !clinicId
+        ) {
             return {
                 errCode: 1,
                 errMessage: 'Missing required parameters'
@@ -116,7 +117,7 @@ let saveInfoDoctor = async (data) => {
             doctorInfo.addressClinic = addressClinic;
             doctorInfo.note = note;
             doctorInfo.specialtyId = specialtyId;
-            doctorInfo.clinicId = clinicId;
+            // doctorInfo.clinicId = clinicId;
             await doctorInfo.save();
         } else {
             // Create
@@ -129,7 +130,7 @@ let saveInfoDoctor = async (data) => {
                 addressClinic,
                 note,
                 specialtyId,
-                clinicId
+                // clinicId
             });
         }
 
@@ -176,7 +177,9 @@ let getDetailDoctor = (doctorId) => {
                         {
                             model: db.Doctor_Info,
                             as: 'DoctorInfoData',
-                            attributes: ['priceId', 'provinceId', 'paymentId', 'addressClinic', 'nameClinic', 'note'],
+                            attributes: {
+                                exclude: ['id', 'doctorId', 'createdAt', 'updatedAt']
+                            },
                             include: [
                                 { model: db.Allcode, as: 'priceData', attributes: ['valueEn', 'valueVi'] },
                                 { model: db.Allcode, as: 'provinceData', attributes: ['valueEn', 'valueVi'] },

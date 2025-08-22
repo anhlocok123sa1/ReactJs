@@ -1,36 +1,54 @@
 .detail-specialty-container {
     .description-specialty {
-        border: 1px solid #e0e0e0;
-        height: 200px;
         margin: 0 100px;
     }
 
+
+
     .detail-specialty-body {
-        padding   : 10px 100px;
+        padding         : 10px 100px;
         background-color: #eee;
+
+        .detail-specialty-filter {
+            margin     : 20px 0;
+            display    : flex;
+            align-items: center;
+            gap        : 12px;
+
+
+            .filter-label {
+                font-weight: 600;
+                white-space: nowrap;
+            }
+
+            .filter-select {
+                min-width: 220px;
+            }
+        }
 
         .each-doctor-container {
             display         : flex;
-            background-color         : #fff;
-            margin: 20px 0;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            background-color: #fff;
+            margin          : 20px 0;
+            border-radius   : 10px;
+            box-shadow      : 0 0 10px rgba(0, 0, 0, 0.3);
+
             .dt-content-left {
-                padding                  : 15px;
-                margin                   : 10px 0 10px 10px;
-                width                    : 50%;
-                box-shadow               : none;
-                position                 : relative;
-                z-index                  : 1;
+                padding   : 15px;
+                margin    : 10px 0 10px 10px;
+                width     : 50%;
+                box-shadow: none;
+                position  : relative;
+                z-index   : 1;
             }
 
             .dt-content-right {
-                padding                   : 15px;
-                margin                    : 10px 10px 10px 0;
-                width                     : 50%;
-                box-shadow                : none;
-                position                  : relative;
-                z-index                   : 1;
+                padding   : 15px;
+                margin    : 10px 10px 10px 0;
+                width     : 50%;
+                box-shadow: none;
+                position  : relative;
+                z-index   : 1;
 
                 .up {}
 

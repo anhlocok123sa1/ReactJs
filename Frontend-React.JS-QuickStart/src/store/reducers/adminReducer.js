@@ -35,6 +35,8 @@ const initialState = {
     allSpecialty: [],
     detailDoctorById: {},
     extraDoctorInfoById: {},
+    isLoadingDetailSpecialty: false,
+    detailSpecialty: {},
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -213,6 +215,17 @@ const adminReducer = (state = initialState, action) => {
             return { ...state, isLoadingAllSpecialty: false, allSpecialty: action.data };
         case actionTypes.FETCH_ALL_SPECIALTY_FAILED:
             return { ...state, isLoadingAllSpecialty: false, allSpecialty: [] };
+        // GET DETAILS SPECIALTY BY ID
+        case actionTypes.GET_DETAILS_SPECIALTY_BY_ID_START:
+            return { ...state, isLoadingDetailSpecialty: true, detailSpecialty: {} };
+        case actionTypes.GET_DETAILS_SPECIALTY_BY_ID_SUCCESS:
+            return {
+                ...state,
+                isLoadingDetailSpecialty: false,
+                detailSpecialty: action.data,
+            };
+        case actionTypes.GET_DETAILS_SPECIALTY_BY_ID_FAILED:
+            return { ...state, isLoadingDetailSpecialty: false, detailSpecialty: {} };
 
         default:
             return state;

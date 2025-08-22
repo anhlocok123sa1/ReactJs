@@ -15,7 +15,8 @@ import {
     postPatientBookingAppointment,
     postVerifyBookingAppointmentServices,
     createNewSpecialtyServices,
-    getAllSpecialtysServices
+    getAllSpecialtysServices,
+    getDetailsSpecialtyByIdServices
 } from '../../services/userService';
 import { toast } from 'react-toastify';
 
@@ -557,3 +558,29 @@ export const fetchAllSpecialtyFailed = () => ({
     type: actionTypes.FETCH_ALL_SPECIALTY_FAILED
 });
 
+// ================== GET DETAILS SPECIALTY BY ID ==================
+export const getDetailsSpecialtyById = (id, location) => {
+    return async (dispatch) => {
+        try {
+            dispatch({ type: actionTypes.GET_DETAILS_SPECIALTY_BY_ID_START, specialtyId: id, location });
+            let res = await getDetailsSpecialtyByIdServices(id, location);
+            if (res && res.errCode === 0) {
+                dispatch(getDetailsSpecialtyByIdSuccess(res.data, id, location));
+            } else {
+                dispatch(getDetailsSpecialtyByIdFailed());
+            }
+        } catch (e) {
+            dispatch(getDetailsSpecialtyByIdFailed());
+            console.error('get details specialty by id error:', e);
+        }
+    };
+}
+export const getDetailsSpecialtyByIdSuccess = (data, id, location) => ({
+    type: actionTypes.GET_DETAILS_SPECIALTY_BY_ID_SUCCESS,
+    data,
+    specialtyId: id,
+    location
+});
+export const getDetailsSpecialtyByIdFailed = () => ({
+    type: actionTypes.GET_DETAILS_SPECIALTY_BY_ID_FAILED
+});
