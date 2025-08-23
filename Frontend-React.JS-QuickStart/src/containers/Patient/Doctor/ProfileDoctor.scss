@@ -28,6 +28,16 @@
             font-size  : 14px;
             font-weight: 400;
             color      : #555;
+            .view-detail-doctor {
+                color      : #45c3d2;
+                text-shadow: 0 0 1px rgba(13, 110, 253, 0.5);
+                cursor     : pointer;
+            }
+        }
+
+        .primary {
+            color      : #45c3d2;
+            text-shadow: 0 0 1px rgba(13, 110, 253, 0.5);
         }
     }
 }

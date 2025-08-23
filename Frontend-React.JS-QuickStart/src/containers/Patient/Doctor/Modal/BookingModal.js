@@ -194,6 +194,8 @@ class BookingModal extends Component {
     render() {
         let { isOpen, closeBookingModal, dataTime, language, } = this.props;
         let { fullName, phoneNumber, email, address, reason, birthday, genders, doctorId, selectedGender } = this.state
+        // console.log('Check dataTime from bookingmodal: ', dataTime);
+
 
 
         return (
@@ -219,11 +221,8 @@ class BookingModal extends Component {
                         <ProfileDoctor
                             isShowDescriptionDoctor={false}
                             dataTime={dataTime}
+                            doctorId={dataTime?.doctorId}
                         />
-
-
-
-
                         {/* Form thông tin bệnh nhân (placeholder — bạn có thể nối state/validate sau) */}
                         <div className="row form-group">
                             <div className="col-6">

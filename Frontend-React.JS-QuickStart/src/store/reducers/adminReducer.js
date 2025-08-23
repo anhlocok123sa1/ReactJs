@@ -21,6 +21,7 @@ const initialState = {
     bulkScheduleDoctor: [],
     isLoadingDoctorSchedule: false,
     doctorSchedule: [],
+    doctorScheduleById: {},
     isLoadingAllRequiredDoctorInfo: false,
     allRequiredDoctorInfo: [],
     isLoadingExtraDoctorInfo: false,
@@ -141,7 +142,10 @@ const adminReducer = (state = initialState, action) => {
             return { ...state, isLoadingDoctorSchedule: true };
 
         case actionTypes.FETCH_DOCTOR_SCHEDULE_SUCCESS:
-            return { ...state, isLoadingDoctorSchedule: false, doctorSchedule: action.data };
+            return { ...state, isLoadingDoctorSchedule: false, doctorSchedule: action.data, doctorScheduleById: {
+                ...state.doctorScheduleById,
+                [action.doctorId]: action.data,
+            } };
 
         case actionTypes.FETCH_DOCTOR_SCHEDULE_FAILED:
             return { ...state, isLoadingDoctorSchedule: false, doctorSchedule: [] };

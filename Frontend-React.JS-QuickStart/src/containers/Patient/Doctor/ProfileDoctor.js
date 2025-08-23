@@ -1,15 +1,15 @@
+// ProfileDoctor.jsx
 import React, { Component } from 'react';
-import { connect } from "react-redux";
-import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { withRouter, Link } from 'react-router-dom';
 import './ProfileDoctor.scss';
-import { LANGUAGES } from '../../../utils'
+import { LANGUAGES } from '../../../utils';
+import { path } from '../../../utils/constant';
 import * as actions from '../../../store/actions';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
-import NumberFormat from 'react-number-format'
+import NumberFormat from 'react-number-format';
 import _ from 'lodash';
-
-
 
 class ProfileDoctor extends Component {
     constructor(props) {
@@ -20,81 +20,28 @@ class ProfileDoctor extends Component {
     }
 
     componentDidMount() {
-        if (this.props.doctorId) {
-            this.props.getDetailDoctor(this.props.doctorId);
-            this.props.getExtraDoctorInfo(this.props.doctorId);
+        const { doctorId } = this.props;
+        if (doctorId) {
+            this.props.getDetailDoctor(doctorId);
+            this.props.getExtraDoctorInfo(doctorId);
         }
-    }
-    renderTimeBooking = (dataTime, language) => {
-        if (dataTime && !_.isEmpty(dataTime)) {
-            return (
-                <p>
-                    {/* Tóm tắt slot đã chọn */}
-                    <div className="schedule-summary" >
-                        <div className="label">
-                            <FormattedMessage id="patient.booking.time" defaultMessage="Thời gian" />:
-                        </div>
-                        <div className="value">
-                            {this.buildTimeBooking(dataTime, language) || '—'}
-                        </div>
-                    </div >
-                </p>
-            )
-        }
-        return <></>
-    }
-    renderPriceBooking = (extraDoctorInfo, language) => {
-        if (extraDoctorInfo && !_.isEmpty(extraDoctorInfo)) {
-            return (
-                <>
-                    {/* Giá khám */}
-                    <div className="price-summary">
-                        <div className="label">
-                            <FormattedMessage id="patient.extra-info-doctor.price" defaultMessage="Giá khám:" />
-                        </div>
-                        <div className="value">
-                            {
-                                extraDoctorInfo &&
-                                    extraDoctorInfo.priceData &&
-                                    language === LANGUAGES.VI ?
-                                    <NumberFormat
-                                        className='currency'
-                                        value={extraDoctorInfo?.priceData?.valueVi}
-                                        displayType={'text'}
-                                        thousandSeparator={true}
-                                        suffix={'VND'}
-                                    />
-                                    :
-                                    <NumberFormat
-                                        className='currency'
-                                        value={extraDoctorInfo?.priceData?.valueEn}
-                                        displayType={'text'}
-                                        thousandSeparator={true}
-                                        suffix={'$'}
-                                    />
-                            }
-                        </div>
-                    </div>
-                </>
-            )
-        }
-        return <></>
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.language !== this.props.language) {
-            this.buildTimeBooking(this.props.dataTime, this.props.language)
+        const { language, doctorId } = this.props;
+        if (prevProps.language !== language) {
+            this.buildTimeBooking(this.props.dataTime, language);
         }
-        if (prevProps.doctorId !== this.props.doctorId) {
-            console.log('Doctor ID changed:', this.props.doctorId);
-
-            this.props.getDetailDoctor(this.props.doctorId);
-            this.props.getExtraDoctorInfo(this.props.doctorId);
+        if (prevProps.doctorId !== doctorId) {
+            this.props.getDetailDoctor(doctorId);
+            this.props.getExtraDoctorInfo(doctorId);
         }
     }
+
     capitalizeFirstLetter = (val) => {
         return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     }
+
     buildTimeBooking = (dataTime, language) => {
         if (!dataTime) return '';
         const timeLabel =
@@ -102,7 +49,6 @@ class ProfileDoctor extends Component {
                 ? dataTime?.timeTypeData?.valueVi
                 : dataTime?.timeTypeData?.valueEn;
 
-        // `dataTime.date` là ms (startOf('day')) bạn đã truyền từ DoctorSchedule
         const m = moment(Number(dataTime.date || 0));
         const dateLabel =
             language === LANGUAGES.VI
@@ -112,43 +58,117 @@ class ProfileDoctor extends Component {
         return `${timeLabel} • ${dateLabel}`;
     };
 
+    renderTimeBooking = (dataTime, language) => {
+        if (dataTime && !_.isEmpty(dataTime)) {
+            return (
+                <div className="schedule-summary">
+                    <div className="label">
+                        <FormattedMessage id="patient.booking.time" defaultMessage="Thời gian" />:
+                    </div>
+                    <div className="value">
+                        {this.buildTimeBooking(dataTime, language) || '—'}
+                    </div>
+                </div>
+            );
+        }
+        return null;
+    };
+
+    renderPriceBooking = (extraDoctorInfo, language) => {
+        if (extraDoctorInfo && !_.isEmpty(extraDoctorInfo)) {
+            const price = language === LANGUAGES.VI
+                ? extraDoctorInfo?.priceData?.valueVi
+                : extraDoctorInfo?.priceData?.valueEn;
+            const suffix = language === LANGUAGES.VI ? 'VND' : '$';
+            return (
+                <div className="price-summary">
+                    <div className="label">
+                        <FormattedMessage id="patient.extra-info-doctor.price" defaultMessage="Giá khám:" />
+                    </div>
+                    <div className="value">
+                        <NumberFormat
+                            className='currency'
+                            value={price}
+                            displayType={'text'}
+                            thousandSeparator={true}
+                            suffix={suffix}
+                        />
+                    </div>
+                </div>
+            );
+        }
+        return null;
+    };
 
     render() {
+        const {
+            detailDoctor,
+            language,
+            isShowDescriptionDoctor,
+            dataTime,
+            extraDoctorInfo,
+            isShowLinkDetail
+        } = this.props;
 
-        let { detailDoctor, language, isShowDescriptionDoctor, dataTime, extraDoctorInfo } = this.props;
         let nameVi = '', nameEn = '';
         if (detailDoctor && detailDoctor.positionData) {
             nameVi = `${detailDoctor.positionData.valueVi}, ${detailDoctor.lastName} ${detailDoctor.firstName}`;
             nameEn = `${detailDoctor.positionData.valueEn}, ${detailDoctor.firstName} ${detailDoctor.lastName}`;
         }
 
+        const linkTo = isShowLinkDetail && this.props.doctorId
+            ? path.DETAIL_DOCTOR.replace(':id', this.props.doctorId)
+            : null;
+
+        const avatarDiv = (
+            <div
+                className="content-left"
+                style={detailDoctor && detailDoctor.image ? { backgroundImage: `url(${detailDoctor.image})` } : {}}
+            />
+        );
+
+        const nameBlock = (
+            <>
+                <h3>{detailDoctor?.name || ''}</h3>
+                <p>{language === LANGUAGES.VI ? nameVi : nameEn}</p>
+            </>
+        );
 
         return (
             <div className="intro-doctor">
-                <div className="content-left" style={detailDoctor && detailDoctor.image ? { backgroundImage: `url(${detailDoctor.image})` } : {}}>
+                {linkTo ? (
+                    <Link to={linkTo} aria-label="Xem chi tiết bác sĩ" className="content-left-link" style={{ textDecoration: 'none' }}>
+                        {avatarDiv}
+                    </Link>
+                ) : (
+                    avatarDiv
+                )}
 
-                </div>
                 <div className="content-right">
-                    <div className="up">
-                        <h3>{detailDoctor && detailDoctor.name ? detailDoctor.name : ''}</h3>
-                        <p>
-                            {language === LANGUAGES.VI ? nameVi : nameEn}
-                        </p>
-                    </div>
+                    {linkTo ? (
+                        <Link to={linkTo} className="up primary" aria-label="Xem chi tiết bác sĩ" style={{ textDecoration: 'none' }}>
+                            {nameBlock}
+                        </Link>
+                    ) : (
+                        <div className="up">
+                            {nameBlock}
+                        </div>
+                    )}
                     <div className="down">
-                        {isShowDescriptionDoctor ?
-                            <>
-                                {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.description &&
-                                    <span>{detailDoctor.markdownData.description}</span>
-                                }
-                            </>
-                            :
+                        {isShowDescriptionDoctor ? (
+                            detailDoctor?.markdownData?.description && <p>{detailDoctor.markdownData.description}</p>
+                        ) : (
                             <>
                                 {this.renderTimeBooking(dataTime, language)}
                                 {this.renderPriceBooking(extraDoctorInfo, language)}
                             </>
-                        }
+                        )}
 
+                        {linkTo && (
+                            <Link to={linkTo} className="view-detail-doctor" style={{ textDecoration: 'none' }}>
+                                <FormattedMessage id="patient.detail-doctor.view-detail" defaultMessage="Xem thêm" />
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>
@@ -156,21 +176,15 @@ class ProfileDoctor extends Component {
     }
 }
 
+const mapStateToProps = (state, ownProps) => ({
+    language: state.app.language,
+    detailDoctor: state.admin.detailDoctorById?.[ownProps.doctorId],
+    extraDoctorInfo: state.admin.extraDoctorInfoById?.[ownProps.doctorId],
+});
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        language: state.app.language,
-        detailDoctor: state.admin.detailDoctorById?.[ownProps.doctorId],
-        extraDoctorInfo: state.admin.extraDoctorInfoById?.[ownProps.doctorId],
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        getDetailDoctor: (data) => dispatch(actions.getDetailDoctorAction(data)),
-        getExtraDoctorInfo: (doctorId) => dispatch(actions.getExtraDoctorInfo(doctorId))
-
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    getDetailDoctor: (data) => dispatch(actions.getDetailDoctorAction(data)),
+    getExtraDoctorInfo: (doctorId) => dispatch(actions.getExtraDoctorInfo(doctorId)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ProfileDoctor));

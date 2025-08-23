@@ -125,6 +125,7 @@ class DetailSpecialty extends Component {
                                                 key={`profile-${doctorId}`}
                                                 doctorId={doctorId}
                                                 isShowDescriptionDoctor={true}
+                                                isShowLinkDetail={true}
                                             />
                                         </div>
                                         <div className="dt-content-right">

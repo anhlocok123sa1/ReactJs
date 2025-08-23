@@ -261,10 +261,10 @@ class DoctorSchedule extends Component {
 }
 
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
     return {
         language: state.app.language,
-        doctorSchedule: state.admin.doctorSchedule
+        doctorSchedule: state.admin.doctorScheduleById?.[ownProps.doctorId],
     };
 };
 

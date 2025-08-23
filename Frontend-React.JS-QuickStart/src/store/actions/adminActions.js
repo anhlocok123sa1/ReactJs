@@ -355,10 +355,10 @@ export const saveBulkScheduleDoctorFailed = () => ({
 export const getDoctorSchedule = (data) => {
     return async (dispatch) => {
         try {
-            dispatch({ type: actionTypes.FETCH_DOCTOR_SCHEDULE_START });
+            dispatch({ type: actionTypes.FETCH_DOCTOR_SCHEDULE_START, doctorId: data.doctorId });
             let res = await getDoctorScheduleServices(data.doctorId, data.date);
             if (res && res.errCode === 0) {
-                dispatch(getDoctorScheduleSuccess(res.data));
+                dispatch(getDoctorScheduleSuccess(res.data , data.doctorId));
             } else {
                 dispatch(getDoctorScheduleFailed());
             }
@@ -368,9 +368,10 @@ export const getDoctorSchedule = (data) => {
         }
     };
 };
-export const getDoctorScheduleSuccess = (data) => ({
+export const getDoctorScheduleSuccess = (data, doctorId) => ({
     type: actionTypes.FETCH_DOCTOR_SCHEDULE_SUCCESS,
-    data
+    data,
+    doctorId
 });
 export const getDoctorScheduleFailed = () => ({
     type: actionTypes.FETCH_DOCTOR_SCHEDULE_FAILED,
