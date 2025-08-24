@@ -20,6 +20,9 @@ module.exports = {
       image: {
         type: Sequelize.BLOB('long')
       },
+      background: {
+        type: Sequelize.BLOB('long')
+      },
       descriptionHTML: {
         type: Sequelize.TEXT
       },

@@ -3,10 +3,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import './ManageSpecialty.scss';
-import { CommonUtils } from '../../../utils';
+import { CommonUtils, CRUD_ACTIONS } from '../../../utils';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import * as actions from '../../../store/actions';
+import { emitter } from '../../../utils/emitter';
+import TableManageSpecialty from './TableManageSpecialty';
 
 const mdParser = new MarkdownIt();
 
@@ -20,31 +22,58 @@ class ManageSpecialty extends Component {
       descriptionMarkdown: '',
       previewImageUrl: '',
       errors: {},
+      action: CRUD_ACTIONS.CREATE,
+      specialtyEditId: '',
     };
     // Dùng ref để reset input file sau khi lưu
     this.fileInputRef = React.createRef();
+
+    this.listenToEmitter();
+
+  }
+
+  listenToEmitter() {
+    emitter.on('EVENT_FILL_EDIT_SPECIALTY', (specialty) => {
+      // image/background are already data URLs like: "data:image/png;base64,...."
+      const imgSrc = specialty?.previewImg || specialty?.image || specialty?.imageBase64 || '';
+
+      this.setState({
+        name: specialty?.name || '',
+        imageBase64: imgSrc,
+        descriptionHTML: specialty?.descriptionHTML || '',
+        descriptionMarkdown: specialty?.descriptionMarkdown || '',
+        previewImageUrl: imgSrc,
+        errors: {},
+        action: CRUD_ACTIONS.EDIT,
+        specialtyEditId: specialty?.id ?? '',
+      });
+
+      if (this.fileInputRef.current) this.fileInputRef.current.value = '';
+    });
+  }
+  componentDidMount() {
+    // keep table fresh (like fetchUserRedux)
+    if (this.props.fetchAllSpecialty) this.props.fetchAllSpecialty();
   }
 
   componentDidUpdate(prevProps) {
     // Reset form khi lưu thành công
     if (prevProps.createSpecialtyResult !== this.props.createSpecialtyResult) {
-      const res = this.props.createSpecialtyResult;
-      if (res && res.errCode === 0) {
-        this.resetForm();
-      }
+      this.resetForm();
+      if (this.props.fetchAllSpecialty) this.props.fetchAllSpecialty();
     }
   }
 
   componentWillUnmount() {
     // Giải phóng URL xem trước khi unmount
-    if (this.state.previewImageUrl) {
+    if (this.state.previewImageUrl && this.state.previewImageUrl.startsWith('blob:')) {
       URL.revokeObjectURL(this.state.previewImageUrl);
     }
   }
 
   resetForm = () => {
     // Giải phóng URL xem trước cũ (nếu có)
-    if (this.state.previewImageUrl) {
+    if (this.state.previewImageUrl && this.state.previewImageUrl.startsWith('blob:')) {
       URL.revokeObjectURL(this.state.previewImageUrl);
     }
 
@@ -60,6 +89,8 @@ class ManageSpecialty extends Component {
       descriptionMarkdown: '',
       previewImageUrl: '',
       errors: {},
+      action: CRUD_ACTIONS.CREATE,
+      specialtyEditId: ''
     });
   };
 
@@ -79,7 +110,7 @@ class ManageSpecialty extends Component {
     if (!file) return;
 
     // Giải phóng URL cũ để tránh leak
-    if (this.state.previewImageUrl) {
+    if (this.state.previewImageUrl && this.state.previewImageUrl.startsWith('blob:')) {
       URL.revokeObjectURL(this.state.previewImageUrl);
     }
 
@@ -94,10 +125,12 @@ class ManageSpecialty extends Component {
   };
 
   validate = () => {
-    const { name, imageBase64, descriptionMarkdown } = this.state;
+    const { name, imageBase64, descriptionMarkdown, action } = this.state;
     const errors = {};
     if (!name?.trim()) errors.name = 'Vui lòng nhập tên chuyên khoa';
-    if (!imageBase64) errors.imageBase64 = 'Vui lòng chọn ảnh';
+    if (action !== CRUD_ACTIONS.EDIT) {
+      if (!imageBase64) errors.imageBase64 = 'Vui lòng chọn ảnh';
+    }
     if (!descriptionMarkdown?.trim()) errors.descriptionMarkdown = 'Vui lòng nhập mô tả';
     this.setState({ errors });
     return Object.keys(errors).length === 0;
@@ -105,19 +138,34 @@ class ManageSpecialty extends Component {
 
   handleSaveNewSpecialty = () => {
     if (!this.validate()) return;
-    const { name, imageBase64, descriptionHTML, descriptionMarkdown } = this.state;
+    const { name, imageBase64, descriptionHTML, descriptionMarkdown, specialtyEditId, action } = this.state;
 
-    this.props.createNewSpecialty({
-      name,
-      imageBase64, // backend nhận field này
-      descriptionHTML,
-      descriptionMarkdown,
-    });
+    if (action === CRUD_ACTIONS.EDIT && specialtyEditId) {
+      this.props.editSpecialty({
+        id: specialtyEditId,
+        name,
+        imageBase64, // backend nhận field này
+        descriptionHTML,
+        descriptionMarkdown,
+      })
+    } else {
+      this.props.createNewSpecialty({
+        name,
+        imageBase64, // backend nhận field này
+        descriptionHTML,
+        descriptionMarkdown,
+      });
+    }
+
+    this.resetForm();
+  };
+
+  handleCancelEdit = () => {
     this.resetForm();
   };
 
   render() {
-    const { name, descriptionMarkdown, previewImageUrl, errors } = this.state;
+    const { name, descriptionMarkdown, previewImageUrl, errors, action } = this.state;
     const { isCreatingSpecialty } = this.props;
 
     return (
@@ -178,8 +226,18 @@ class ManageSpecialty extends Component {
             >
               {isCreatingSpecialty ? 'Đang lưu...' : 'Lưu'}
             </button>
+            {action === CRUD_ACTIONS.EDIT && (
+              <button
+                type="button"
+                className="btn btn-outline-secondary btn-cancel-edit ml-2"
+                onClick={this.handleCancelEdit}
+              >
+                Hủy
+              </button>
+            )}
           </div>
         </div>
+        <TableManageSpecialty action={action} />
       </div>
     );
   }
@@ -188,10 +246,13 @@ class ManageSpecialty extends Component {
 const mapStateToProps = (state) => ({
   isCreatingSpecialty: state.admin.isCreatingSpecialty,
   createSpecialtyResult: state.admin.createSpecialtyResult,
+  allSpecialty: state.admin.allSpecialty,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   createNewSpecialty: (data) => dispatch(actions.createNewSpecialty(data)),
+  fetchAllSpecialty: () => dispatch(actions.fetchAllSpecialty()),
+  editSpecialty: (data) => dispatch(actions.editSpecialty(data)),
 });
 
 export default connect(

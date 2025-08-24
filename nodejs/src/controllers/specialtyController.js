@@ -38,10 +38,38 @@ let getDetailsSpecialtyById = async (req, res) => {
             errMessage: "Error from server"
         });
     }
+}
+
+let handleDeleteSpecialty = async (req, res) => {
+    try {
+        let response = await specialtyServices.handleDeleteSpecialty(req.query.id);
+        return res.status(200).json(response);
+    } catch (e) {
+        console.error("Error in handleDeleteSpecialty:", e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from server"
+        });
     }
+}
+
+let handleEditSpecialty = async (req, res) => {
+    try {
+        let response = await specialtyServices.handleEditSpecialty(req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        console.error("Error in handleEditSpecialty:", e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from server"
+        });
+    }
+}
 
 module.exports = {
     createSpecialty: createSpecialty,
     getAllSpecialty: getAllSpecialty,
-    getDetailsSpecialtyById: getDetailsSpecialtyById
+    getDetailsSpecialtyById: getDetailsSpecialtyById,
+    handleDeleteSpecialty: handleDeleteSpecialty,
+    handleEditSpecialty: handleEditSpecialty,
 }

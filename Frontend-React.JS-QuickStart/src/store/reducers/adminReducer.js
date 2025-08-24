@@ -40,6 +40,21 @@ const initialState = {
     detailSpecialty: {},
     isCreatingClinic: false,
     createClinicResult: null,
+    isLoadingAllClinic: false,
+    allClinic: [],
+    detailClinic: {},
+    isLoadingDetailClinic: false,
+    detailClinicById: {},
+    isLoadingAllClinicRedux: false,
+    allClinicRedux: [],
+    isDeletingClinic: false,
+    deleteClinicResult: null,
+    isEditingClinic: false,
+    editClinicResult: null,
+    isDeletingSpecialty: false,
+    deleteSpecialtyResult: null,
+    isEditingSpecialty: false,
+    editSpecialtyResult: null,
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -244,6 +259,79 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 isCreatingClinic: false,
                 createClinicResult: action.data || { errCode: -1, errMessage: 'Error' }
+            };
+        // FETCH ALL CLINIC
+        case actionTypes.FETCH_ALL_CLINIC_START:
+            return { ...state, isLoadingAllClinic: true, allClinic: [] };
+        case actionTypes.FETCH_ALL_CLINIC_SUCCESS:
+            return { ...state, isLoadingAllClinic: false, allClinic: action.data };
+        case actionTypes.FETCH_ALL_CLINIC_FAILED:
+            return { ...state, isLoadingAllClinic: false, allClinic: [] };
+        // GET DETAILS CLINIC BY ID
+        case actionTypes.GET_DETAILS_CLINIC_BY_ID_START:
+            return { ...state, isLoadingDetailClinic: true, detailClinic: {} };
+        case actionTypes.GET_DETAILS_CLINIC_BY_ID_SUCCESS:
+            return {
+                ...state,
+                isLoadingDetailClinic: false,
+                detailClinic: action.data,
+                detailClinicById: {
+                    ...state.detailClinicById,
+                    [action.clinicId]: action.data,
+                },
+            };
+        case actionTypes.GET_DETAILS_CLINIC_BY_ID_FAILED:
+            return { ...state, isLoadingDetailClinic: false, detailClinic: {} };
+        // FETCH ALL CLINIC REDUX
+        case actionTypes.FETCH_ALL_CLINIC_REDUX_START:
+            return { ...state, isLoadingAllClinicRedux: true, allClinicRedux: [] };
+        case actionTypes.FETCH_ALL_CLINIC_REDUX_SUCCESS:
+            return { ...state, isLoadingAllClinicRedux: false, allClinicRedux: action.data };
+        case actionTypes.FETCH_ALL_CLINIC_REDUX_FAILED:
+            return { ...state, isLoadingAllClinicRedux: false, allClinicRedux: [] };
+        // DELETE CLINIC REDUX
+        case actionTypes.DELETE_CLINIC_REDUX_START:
+            return { ...state, isDeletingClinic: true, deleteClinicResult: null };
+        case actionTypes.DELETE_CLINIC_REDUX_SUCCESS:
+            return { ...state, isDeletingClinic: false, deleteClinicResult: action.data };
+        case actionTypes.DELETE_CLINIC_REDUX_FAILED:
+            return {
+                ...state,
+                isDeletingClinic: false,
+                deleteClinicResult: action.data || { errCode: -1, errMessage: 'Error' }
+            };
+        // EDIT CLINIC REDUX
+        case actionTypes.EDIT_CLINIC_REDUX_START:
+            return { ...state, isEditingClinic: true, editClinicResult: null };
+        case actionTypes.EDIT_CLINIC_REDUX_SUCCESS:
+            return { ...state, isEditingClinic: false, editClinicResult: action.data };
+        case actionTypes.EDIT_CLINIC_REDUX_FAILED:
+            return {
+                ...state,
+                isEditingClinic: false,
+                editClinicResult: action.data || { errCode: -1, errMessage: 'Error' }
+            };
+        // DELETE SPECIALTY REDUX
+        case actionTypes.DELETE_SPECIALTY_REDUX_START:
+            return { ...state, isDeletingSpecialty: true, deleteSpecialtyResult: null };
+        case actionTypes.DELETE_SPECIALTY_REDUX_SUCCESS:
+            return { ...state, isDeletingSpecialty: false, deleteSpecialtyResult: action.data };
+        case actionTypes.DELETE_SPECIALTY_REDUX_FAILED:
+            return {
+                ...state,
+                isDeletingSpecialty: false,
+                deleteSpecialtyResult: action.data || { errCode: -1, errMessage: 'Error' }
+            };
+        // EDIT SPECIALTY REDUX
+        case actionTypes.EDIT_SPECIALTY_REDUX_START:
+            return { ...state, isEditingSpecialty: true, editSpecialtyResult: null };
+        case actionTypes.EDIT_SPECIALTY_REDUX_SUCCESS:
+            return { ...state, isEditingSpecialty: false, editSpecialtyResult: action.data };
+        case actionTypes.EDIT_SPECIALTY_REDUX_FAILED:
+            return {
+                ...state,
+                isEditingSpecialty: false,
+                editSpecialtyResult: action.data || { errCode: -1, errMessage: 'Error' }
             };
 
         default:

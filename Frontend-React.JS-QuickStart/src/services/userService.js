@@ -87,5 +87,36 @@ const createNewClinicServices = (data) => {
     return axios.post('/api/create-new-clinic', data)
 }
 
+const getAllClinicServices = () => {
+    return axios.get('/api/get-all-clinic')
+}
+const getDetailsClinicByIdServices = (id) => {
+    return axios.get('/api/get-details-clinic-by-id', {
+        params: {
+            id: id
+        }
+    });
+}
 
-export { handleLoginApi, getAllUsers, createNewUserServices, deleteUserServices, editUserServices, getAllCodeServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices, getExtraInfoDoctorById, postPatientBookingAppointment, postVerifyBookingAppointmentServices, createNewSpecialtyServices, getAllSpecialtysServices, getDetailsSpecialtyByIdServices, createNewClinicServices };
+const getAllClinicRedux = () => {
+    return axios.get('/api/get-all-clinic-redux')
+}
+
+const deleteClinicRedux = (clinicId) => {
+    return axios.delete('/api/delete-clinic', { params: { id: clinicId } });
+}
+
+const editClinicRedux = (data) => {
+    return axios.put('/api/edit-clinic', data)
+}
+
+const deleteSpecialtyRedux = (specialtyId) => {
+    return axios.delete('/api/delete-specialty', { params: { id: specialtyId } });
+}
+
+const editSpecialtyRedux = (data) => {
+    return axios.put('/api/edit-specialty', data)
+}
+
+
+export { handleLoginApi, getAllUsers, createNewUserServices, deleteUserServices, editUserServices, getAllCodeServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices, getExtraInfoDoctorById, postPatientBookingAppointment, postVerifyBookingAppointmentServices, createNewSpecialtyServices, getAllSpecialtysServices, getDetailsSpecialtyByIdServices, createNewClinicServices, getAllClinicServices, getDetailsClinicByIdServices, getAllClinicRedux, deleteClinicRedux, editClinicRedux, deleteSpecialtyRedux, editSpecialtyRedux };

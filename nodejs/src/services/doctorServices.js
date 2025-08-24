@@ -66,13 +66,13 @@ let saveInfoDoctor = async (data) => {
         const {
             contentMarkdown, contentHTML, actions, doctorId, description,
             selectedPrice, selectedPayment, selectedProvince,
-            nameClinic, addressClinic, note, specialtyId,
+            nameClinic, addressClinic, note, specialtyId, clinicId
         } = data;
 
         // Kiểm tra dữ liệu bắt buộc
         if (!contentMarkdown || !contentHTML || !actions || !doctorId || !description ||
             !selectedPrice || !selectedPayment || !selectedProvince ||
-            !nameClinic || !addressClinic || !specialtyId // || !clinicId
+            !nameClinic || !addressClinic || !specialtyId  || !clinicId
         ) {
             return {
                 errCode: 1,
@@ -117,7 +117,7 @@ let saveInfoDoctor = async (data) => {
             doctorInfo.addressClinic = addressClinic;
             doctorInfo.note = note;
             doctorInfo.specialtyId = specialtyId;
-            // doctorInfo.clinicId = clinicId;
+            doctorInfo.clinicId = clinicId;
             await doctorInfo.save();
         } else {
             // Create
@@ -130,7 +130,7 @@ let saveInfoDoctor = async (data) => {
                 addressClinic,
                 note,
                 specialtyId,
-                // clinicId
+                clinicId
             });
         }
 

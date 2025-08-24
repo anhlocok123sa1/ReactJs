@@ -104,7 +104,7 @@ class Specialty extends Component {
                                         }}
                                     >
                                         <img src={this.getImageSrc(item.image)} alt={item.name || 'specialty'} />
-                                        <span>{item.name || ''}</span>
+                                        <span className='name'>{item.name || ''}</span>
                                     </div>
                                 ))}
                                 {(!arrSpecialty || arrSpecialty.length === 0) && (

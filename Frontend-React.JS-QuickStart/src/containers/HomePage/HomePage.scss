@@ -71,6 +71,8 @@
               }
             }
           }
+
+
         }
       }
     }
@@ -130,6 +132,12 @@
 
         span {
           margin-bottom: 10px;
+        }
+
+        &:hover {
+          .name {
+            color: #45c3d2;
+          }
         }
       }
     }

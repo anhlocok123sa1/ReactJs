@@ -1,0 +1,248 @@
+// src/containers/System/Specialty/TableManageClinic.jsx
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../../../store/actions';
+import { emitter } from '../../../utils/emitter';
+import { CommonUtils } from '../../../utils';
+
+class TableManageClinic extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            clinicRedux: [],
+            currentPage: 1,
+            pageSize: 10,
+            search: '',
+        };
+    }
+
+    componentDidMount() {
+        this.props.fetchClinicRedux();
+    }
+
+    async componentDidUpdate(prevProps, prevState) {
+        if (prevProps.allClinicRedux !== this.props.allClinicRedux) {
+            this.setState({ clinicRedux: this.props.allClinicRedux });
+        }
+        if (
+            prevState.search !== this.state.search ||
+            prevState.pageSize !== this.state.pageSize
+        ) {
+            this.ensureValidPage();
+        }
+    }
+
+    ensureValidPage = () => {
+        const total = this.getFiltered().length;
+        const totalPages = Math.max(1, Math.ceil(total / this.state.pageSize));
+        if (this.state.currentPage > totalPages) {
+            this.setState({ currentPage: totalPages });
+        }
+    };
+
+    handleDeleteClinic = (clinic) => {
+        if (!clinic?.id) return;
+        this.props.deleteClinic(clinic.id);
+    };
+
+    handleEditClinic = (clinic) => {
+        // emit đúng channel mà ManageClinic đang lắng nghe
+        emitter.emit('EVENT_FILL_EDIT_CLINIC', clinic);
+    };
+
+    handleSearchChange = (e) => {
+        this.setState({ search: e.target.value, currentPage: 1 });
+    };
+
+    handlePageChange = (page) => {
+        if (page < 1) return;
+        const totalPages = Math.max(1, Math.ceil(this.getFiltered().length / this.state.pageSize));
+        if (page > totalPages) return;
+        this.setState({ currentPage: page });
+    };
+
+
+    handlePageSizeChange = (e) => {
+        const val = Number(e.target.value) || 10;
+        this.setState({ pageSize: val, currentPage: 1 });
+    };
+
+
+    getFiltered = () => {
+        const { clinicRedux, search } = this.state;
+        const q = (search || '').toLowerCase().trim();
+        if (!q) return clinicRedux;
+        return clinicRedux.filter((c) => {
+            const name = (c?.name || '').toLowerCase();
+            const address = (c?.address || '').toLowerCase();
+            return name.includes(q) || address.includes(q);
+        });
+    };
+
+
+    getPaged = () => {
+        const { currentPage, pageSize } = this.state;
+        const filtered = this.getFiltered();
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        return {
+            items: filtered.slice(start, end),
+            total: filtered.length,
+            startIndex: start,
+            totalPages: Math.max(1, Math.ceil(filtered.length / pageSize)),
+        };
+    };
+
+
+    renderPagination(totalPages) {
+        const { currentPage } = this.state;
+        const pages = [];
+
+
+        // simple windowed pager
+        const windowSize = 5;
+        let start = Math.max(1, currentPage - Math.floor(windowSize / 2));
+        let end = Math.min(totalPages, start + windowSize - 1);
+        start = Math.max(1, end - windowSize + 1);
+
+
+        for (let p = start; p <= end; p += 1) {
+            pages.push(
+                <li key={p} className={`page-item ${p === currentPage ? 'active' : ''}`}>
+                    <button type="button" className="page-link" onClick={() => this.handlePageChange(p)}>
+                        {p}
+                    </button>
+                </li>
+            );
+        }
+        return (
+            <nav aria-label="Clinic pagination" className="mt-3">
+                <ul className="pagination mb-0">
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button type="button" className="page-link" onClick={() => this.handlePageChange(currentPage - 1)}>
+                            «
+                        </button>
+                    </li>
+                    {pages}
+                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                        <button type="button" className="page-link" onClick={() => this.handlePageChange(currentPage + 1)}>
+                            »
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        );
+    }
+
+    render() {
+        const { search, pageSize, currentPage } = this.state;
+        const thumbStyle = {
+            width: 90,
+            height: 60,
+            objectFit: 'cover',
+            borderRadius: 6,
+            border: '1px solid #e5e7eb',
+        };
+        const { items, total, startIndex, totalPages } = this.getPaged();
+        const showingFrom = total === 0 ? 0 : startIndex + 1;
+        const showingTo = Math.min(startIndex + items.length, total);
+
+        return (
+            <div className="table-manage-clinic-wrapper mt-4">
+                {/* Controls */}
+                <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
+                    <div className="me-2">
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={search}
+                            onChange={this.handleSearchChange}
+                            placeholder="Tìm theo tên/địa chỉ..."
+                            aria-label="Search clinics"
+                            style={{ minWidth: 240 }}
+                        />
+                    </div>
+                    <div className="ms-auto d-flex align-items-center">
+                        <span className="me-2 text-muted">Hiển thị</span>
+                        <select className="form-select" style={{ width: 90 }} value={pageSize} onChange={this.handlePageSizeChange}>
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="table-responsive">
+                    <table className="table table-bordered table-striped mb-2">
+                        <thead>
+                            <tr className="table-primary">
+                                <th scope="col" style={{ width: 60 }}>#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Address</th>
+                                <th scope="col" style={{ width: 120 }}>Background</th>
+                                <th scope="col" style={{ width: 120 }}>Image</th>
+                                <th scope="col" style={{ width: 120 }}>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {items.map((item, idx) => (
+                                <tr key={item.id || `${startIndex}-${idx}`}>
+                                    <th scope="row">{startIndex + idx + 1}</th>
+                                    <td>{item.name}</td>
+                                    <td>{item.address}</td>
+                                    <td>
+                                        {item.background ? (
+                                            <img src={item.background} alt={`${item.name || 'clinic'}-bg`} style={thumbStyle} />
+                                        ) : (
+                                            '—'
+                                        )}
+                                    </td>
+                                    <td>
+                                        {item.image ? (
+                                            <img src={item.image} alt={`${item.name || 'clinic'}-img`} style={thumbStyle} />
+                                        ) : (
+                                            '—'
+                                        )}
+                                    </td>
+                                    <td>
+                                        <button type="button" className="btn-edit" title="Edit" onClick={() => this.handleEditClinic(item)}>
+                                            <i className="fas fa-pencil-alt" />
+                                        </button>
+                                        <button type="button" className="btn-delete" title="Delete" onClick={() => this.handleDeleteClinic(item)}>
+                                            <i className="fas fa-trash" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            {items.length === 0 && (
+                                <tr>
+                                    <td colSpan={6} className="text-center text-muted">
+                                        No clinics
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+                {/* Footer */}
+                <div className="d-flex align-items-center justify-content-between">
+                    <div className="text-muted small">
+                        {`Hiển thị ${showingFrom}-${showingTo} / ${total}`}
+                    </div>
+                    {this.renderPagination(totalPages)}
+                </div>
+            </div>
+        )
+    }
+}
+
+const mapStateToProps = (state) => ({
+    allClinicRedux: state.admin.allClinicRedux,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    fetchClinicRedux: () => dispatch(actions.fetchAllClinicRedux()),
+    deleteClinic: (id) => dispatch(actions.deleteClinic(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TableManageClinic);

@@ -85,7 +85,7 @@ class OutStandingDoctoc extends Component {
                                                 <div className="outer-bg">
                                                     <img src={image} alt={name} />
                                                 </div>
-                                                <div className="position text-center">
+                                                <div className="position text-center name">
                                                     <p className="text-break fw-bold fs-5" style={{ maxWidth: '240px' }}>
                                                         {name}
                                                     </p>
