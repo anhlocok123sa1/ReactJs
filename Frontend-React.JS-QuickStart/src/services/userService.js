@@ -83,7 +83,9 @@ const getDetailsSpecialtyByIdServices = (id, location) => {
     });
 }
 
+const createNewClinicServices = (data) => {
+    return axios.post('/api/create-new-clinic', data)
+}
 
 
-
-export { handleLoginApi, getAllUsers, createNewUserServices, deleteUserServices, editUserServices, getAllCodeServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices, getExtraInfoDoctorById, postPatientBookingAppointment, postVerifyBookingAppointmentServices, createNewSpecialtyServices, getAllSpecialtysServices, getDetailsSpecialtyByIdServices };
+export { handleLoginApi, getAllUsers, createNewUserServices, deleteUserServices, editUserServices, getAllCodeServices, getTopDoctorHomeServices, getAllDoctorsServices, saveInfoDoctorServices, getDetailsDoctorServices, bulkCreateScheduleServices, getDoctorScheduleServices, getExtraInfoDoctorById, postPatientBookingAppointment, postVerifyBookingAppointmentServices, createNewSpecialtyServices, getAllSpecialtysServices, getDetailsSpecialtyByIdServices, createNewClinicServices };

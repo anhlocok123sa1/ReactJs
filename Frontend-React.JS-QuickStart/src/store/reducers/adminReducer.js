@@ -38,6 +38,8 @@ const initialState = {
     extraDoctorInfoById: {},
     isLoadingDetailSpecialty: false,
     detailSpecialty: {},
+    isCreatingClinic: false,
+    createClinicResult: null,
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -142,10 +144,12 @@ const adminReducer = (state = initialState, action) => {
             return { ...state, isLoadingDoctorSchedule: true };
 
         case actionTypes.FETCH_DOCTOR_SCHEDULE_SUCCESS:
-            return { ...state, isLoadingDoctorSchedule: false, doctorSchedule: action.data, doctorScheduleById: {
-                ...state.doctorScheduleById,
-                [action.doctorId]: action.data,
-            } };
+            return {
+                ...state, isLoadingDoctorSchedule: false, doctorSchedule: action.data, doctorScheduleById: {
+                    ...state.doctorScheduleById,
+                    [action.doctorId]: action.data,
+                }
+            };
 
         case actionTypes.FETCH_DOCTOR_SCHEDULE_FAILED:
             return { ...state, isLoadingDoctorSchedule: false, doctorSchedule: [] };
@@ -230,6 +234,17 @@ const adminReducer = (state = initialState, action) => {
             };
         case actionTypes.GET_DETAILS_SPECIALTY_BY_ID_FAILED:
             return { ...state, isLoadingDetailSpecialty: false, detailSpecialty: {} };
+        // CREATE CLINIC
+        case actionTypes.CREATE_NEW_CLINIC_START:
+            return { ...state, isCreatingClinic: true, createClinicResult: null };
+        case actionTypes.CREATE_NEW_CLINIC_SUCCESS:
+            return { ...state, isCreatingClinic: false, createClinicResult: action.data };
+        case actionTypes.CREATE_NEW_CLINIC_FAILED:
+            return {
+                ...state,
+                isCreatingClinic: false,
+                createClinicResult: action.data || { errCode: -1, errMessage: 'Error' }
+            };
 
         default:
             return state;

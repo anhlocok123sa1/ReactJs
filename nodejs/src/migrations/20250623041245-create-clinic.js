@@ -18,7 +18,13 @@ module.exports = {
         type: Sequelize.TEXT
       },
       image: {
-        type: Sequelize.STRING
+        type: Sequelize.BLOB('long')
+      },
+      descriptionHTML: {
+        type: Sequelize.TEXT
+      },
+      descriptionMarkdown: {
+        type: Sequelize.TEXT
       },
       createdAt: {
         allowNull: false,

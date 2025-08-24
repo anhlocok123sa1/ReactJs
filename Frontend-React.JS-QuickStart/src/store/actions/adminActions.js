@@ -16,7 +16,8 @@ import {
     postVerifyBookingAppointmentServices,
     createNewSpecialtyServices,
     getAllSpecialtysServices,
-    getDetailsSpecialtyByIdServices
+    getDetailsSpecialtyByIdServices,
+    createNewClinicServices
 } from '../../services/userService';
 import { toast } from 'react-toastify';
 
@@ -584,4 +585,33 @@ export const getDetailsSpecialtyByIdSuccess = (data, id, location) => ({
 });
 export const getDetailsSpecialtyByIdFailed = () => ({
     type: actionTypes.GET_DETAILS_SPECIALTY_BY_ID_FAILED
+});
+
+// ================== CREATE NEW CLINIC ==================
+export const createNewClinic = (data) => {
+    return async (dispatch) => {
+        try {
+            dispatch({ type: actionTypes.CREATE_NEW_CLINIC_START });
+            let res = await createNewClinicServices(data);
+            if (res && res.errCode === 0) {
+                dispatch(createNewClinicSuccess(res));
+                toast.success('Create new clinic success!');
+            } else {
+                dispatch(createNewClinicFailed(res));
+                toast.error(res?.errMessage || 'Create new clinic failed!');
+            }
+        } catch (e) {
+            console.error('createNewClinic error:', e);
+            dispatch(createNewClinicFailed({ errCode: -1, errMessage: 'Error from server' }));
+            toast.error('Server error');
+        }
+    };
+}
+export const createNewClinicSuccess = (payload) => ({
+    type: actionTypes.CREATE_NEW_CLINIC_SUCCESS,
+    payload
+});
+export const createNewClinicFailed = (payload) => ({
+    type: actionTypes.CREATE_NEW_CLINIC_FAILED,
+    payload
 });
