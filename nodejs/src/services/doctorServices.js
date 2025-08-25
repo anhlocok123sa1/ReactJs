@@ -72,7 +72,7 @@ let saveInfoDoctor = async (data) => {
         // Kiểm tra dữ liệu bắt buộc
         if (!contentMarkdown || !contentHTML || !actions || !doctorId || !description ||
             !selectedPrice || !selectedPayment || !selectedProvince ||
-            !nameClinic || !addressClinic || !specialtyId  || !clinicId
+            !nameClinic || !addressClinic || !specialtyId || !clinicId
         ) {
             return {
                 errCode: 1,
@@ -341,6 +341,50 @@ let getExtraInfoDoctorById = (doctorId) => {
     })
 }
 
+let getListPatientForDoctor = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                reject({
+                    errCode: 1,
+                    errMessage: "Missing required parameter!"
+                })
+            } else {
+                let formattedDate = Number(date);
+                let data = await db.Booking.findAll({
+                    where: {
+                        statusId: 'S2',
+                        doctorId: doctorId,
+                        date: formattedDate
+                    },
+                    include: [
+                        {
+                            model: db.User, as: 'patientData', attributes: ['email', 'firstName', 'address', 'gender'],
+                            include: [
+                                { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
+                            ]
+                        },
+                        {
+                            model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueEn', 'valueVi']
+                        },
+                    ],
+                    order: [
+                        ['timeType', 'ASC']
+                    ],
+                    raw: false,
+                    nest: true
+                })
+                resolve({
+                    errCode: 0,
+                    data: data
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 
 
 module.exports = {
@@ -351,4 +395,5 @@ module.exports = {
     bulkCreateSchedule: bulkCreateSchedule,
     getDoctorSchedule: getDoctorSchedule,
     getExtraInfoDoctorById: getExtraInfoDoctorById,
+    getListPatientForDoctor: getListPatientForDoctor,
 }

@@ -18,7 +18,8 @@ class BookingModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            fullName: '',
+            firstName: '',
+            lastName: '',
             phoneNumber: '',
             email: '',
             address: '',
@@ -32,8 +33,9 @@ class BookingModal extends Component {
     }
     validate = () => {
         const errors = {};
-        const { fullName, phoneNumber, email, selectedGender } = this.state;
-        if (!fullName) errors.fullName = 'Vui lòng nhập họ tên';
+        const { firstName, lastName, phoneNumber, email, selectedGender } = this.state;
+        if (!firstName) errors.firstName = 'Vui lòng nhập họ';
+        if (!lastName) errors.lastName = 'Vui lòng nhập tên';
         if (!email) errors.email = 'Vui lòng nhập email';
         if (!phoneNumber) errors.phoneNumber = 'Vui lòng nhập số điện thoại';
         if (!selectedGender) errors.selectedGender = 'Vui lòng chọn giới tính';
@@ -84,7 +86,8 @@ class BookingModal extends Component {
         ) {
             // reset form
             this.setState({
-                fullName: '',
+                firstName: '',
+                lastName: '',
                 phoneNumber: '',
                 email: '',
                 address: '',
@@ -128,14 +131,15 @@ class BookingModal extends Component {
         if (!dataTime || !dataTime.doctorId || !dataTime.timeType || !dataTime.date) return;
 
         const {
-            fullName, phoneNumber, email, address, reason, birthday, selectedGender
+            firstName, lastName, phoneNumber, email, address, reason, birthday, selectedGender
         } = this.state;
 
         const timeString = this.buildTimeBooking(dataTime);
         const doctorName = this.buildDoctorName(dataTime);
 
         const payload = {
-            fullName,
+            firstName,
+            lastName,
             phoneNumber,
             email,
             address,
@@ -193,7 +197,7 @@ class BookingModal extends Component {
 
     render() {
         let { isOpen, closeBookingModal, dataTime, language, } = this.props;
-        let { fullName, phoneNumber, email, address, reason, birthday, genders, doctorId, selectedGender } = this.state
+        let { firstName, lastName, phoneNumber, email, address, reason, birthday, genders, doctorId, selectedGender } = this.state
         // console.log('Check dataTime from bookingmodal: ', dataTime);
 
 
@@ -226,10 +230,16 @@ class BookingModal extends Component {
                         {/* Form thông tin bệnh nhân (placeholder — bạn có thể nối state/validate sau) */}
                         <div className="row form-group">
                             <div className="col-6">
-                                <label><FormattedMessage id="patient.booking.fullname" defaultMessage="Họ và tên" /></label>
+                                <label><FormattedMessage id="patient.booking.lastName" defaultMessage="Họ" /></label>
                                 <input className="form-control"
-                                    value={fullName}
-                                    onChange={(event) => this.handleOnchangeInput(event, 'fullName')} />
+                                    value={lastName}
+                                    onChange={(event) => this.handleOnchangeInput(event, 'lastName')} />
+                            </div>
+                            <div className="col-6">
+                                <label><FormattedMessage id="patient.booking.firstName" defaultMessage="Tên" /></label>
+                                <input className="form-control"
+                                    value={firstName}
+                                    onChange={(event) => this.handleOnchangeInput(event, 'firstName')} />
                             </div>
                             <div className="col-6">
                                 <label><FormattedMessage id="patient.booking.phone" defaultMessage="Số điện thoại" /></label>
@@ -237,25 +247,25 @@ class BookingModal extends Component {
                                     value={phoneNumber}
                                     onChange={(event) => this.handleOnchangeInput(event, 'phoneNumber')} />
                             </div>
-                            <div className="col-6 mt-3">
+                            <div className="col-6">
                                 <label><FormattedMessage id="patient.booking.email" defaultMessage="Email" /></label>
                                 <input className="form-control"
                                     value={email}
                                     onChange={(event) => this.handleOnchangeInput(event, 'email')} />
                             </div>
-                            <div className="col-6 mt-3">
+                            <div className="col-6">
                                 <label><FormattedMessage id="patient.booking.address" defaultMessage="Địa chỉ" /></label>
                                 <input className="form-control"
                                     value={address}
                                     onChange={(event) => this.handleOnchangeInput(event, 'address')} />
                             </div>
-                            <div className="col-12 mt-3">
+                            <div className="col-12">
                                 <label><FormattedMessage id="patient.booking.reason" defaultMessage="Lý do khám" /></label>
                                 <textarea className="form-control" rows={3}
                                     value={reason}
                                     onChange={(event) => this.handleOnchangeInput(event, 'reason')} />
                             </div>
-                            <div className="col-6 mt-3">
+                            <div className="col-6">
                                 <label><FormattedMessage id="patient.booking.birthday" defaultMessage="Ngày sinh" /></label>
                                 <DatePicker
                                     onChange={(event) => this.handleOnchangeDatePicker(event)}
@@ -263,7 +273,7 @@ class BookingModal extends Component {
                                     value={birthday}
                                 />
                             </div>
-                            <div className="col-6 mt-3">
+                            <div className="col-6">
                                 <label><FormattedMessage id="patient.booking.gender" defaultMessage="Giới tính" /></label>
                                 <Select
                                     value={selectedGender}

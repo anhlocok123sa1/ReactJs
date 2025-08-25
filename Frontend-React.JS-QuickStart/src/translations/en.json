@@ -57,7 +57,8 @@
     },
     "doctor": {
       "manage": "Manage",
-      "manage-schedule": "Manage doctor's schedule"
+      "manage-schedule": "Manage doctor's schedule",
+      "manage-patient": "Manage patient's appointments"
     }
   },
   "manage-user": {
@@ -107,7 +108,8 @@
     "booking": {
       "title": "Medical Appointment Booking Information",
       "time": "Time",
-      "fullname": "Full Name",
+      "firstName": "First Name",
+      "lastName": "Last Name",
       "phone": "Phone Number",
       "email": "Email",
       "address": "Address",
@@ -116,7 +118,7 @@
       "cancel": "Cancel",
       "for-who": "Booking for",
       "gender": "Gender",
-      "birthday":"Birthday"
+      "birthday": "Birthday"
     }
   },
   "admin": {

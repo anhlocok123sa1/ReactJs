@@ -55,6 +55,8 @@ const initialState = {
     deleteSpecialtyResult: null,
     isEditingSpecialty: false,
     editSpecialtyResult: null,
+    isLoadingListPatientForDoctor: false,
+    listPatientForDoctor: [],
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -332,6 +334,17 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 isEditingSpecialty: false,
                 editSpecialtyResult: action.data || { errCode: -1, errMessage: 'Error' }
+            };
+        //LIST PATIENT FOR DOCTOR
+        case actionTypes.GET_LIST_PATIENT_FOR_DOCTOR_START:
+            return { ...state, isLoadingListPatientForDoctor: true, listPatientForDoctor: [] };
+        case actionTypes.GET_LIST_PATIENT_FOR_DOCTOR_SUCCESS:
+            return { ...state, isLoadingListPatientForDoctor: false, listPatientForDoctor: action.data };
+        case actionTypes.GET_LIST_PATIENT_FOR_DOCTOR_FAILED:
+            return {
+                ...state,
+                isLoadingListPatientForDoctor: false,
+                listPatientForDoctor: action.data || { errCode: -1, errMessage: 'Error' }
             };
 
         default:

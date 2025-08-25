@@ -8,6 +8,7 @@ import {
     getDoctorScheduleServices,
     getExtraInfoDoctorById,
     getAllCodeServices,
+    getListPatientForDoctorServices
 } from '../../services/userService';
 
 // ============== TOP DOCTOR HOME ==============
@@ -145,3 +146,20 @@ export const getExtraDoctorInfo = (doctorId) => {
 };
 export const getExtraDoctorInfoSuccess = (data, doctorId) => ({ type: actionTypes.FETCH_EXTRA_DOCTOR_INFO_SUCCESS, data, doctorId });
 export const getExtraDoctorInfoFailed = () => ({ type: actionTypes.FETCH_EXTRA_DOCTOR_INFO_FAILED });
+
+// ============== GET LIST PATIENT FOR DOCTOR ==============
+export const getListPatientForDoctor = (doctorId, date) => {
+    return async (dispatch) => {
+        try {
+            dispatch({ type: actionTypes.GET_LIST_PATIENT_FOR_DOCTOR_START, doctorId, date });
+            const res = await getListPatientForDoctorServices(doctorId, date);
+            if (res && res.errCode === 0) dispatch(getListPatientForDoctorSuccess(res.data, doctorId, date));
+            else dispatch(getListPatientForDoctorFailed());
+        } catch (e) {
+            dispatch(getListPatientForDoctorFailed());
+            console.error('get list patient for doctor error:', e);
+        }
+    };
+};
+export const getListPatientForDoctorSuccess = (data, doctorId, date) => ({ type: actionTypes.GET_LIST_PATIENT_FOR_DOCTOR_SUCCESS, data, doctorId, date });
+export const getListPatientForDoctorFailed = () => ({ type: actionTypes.GET_LIST_PATIENT_FOR_DOCTOR_FAILED });

@@ -21,24 +21,39 @@ let saveBookAppointment = (data) => {
         try {
             const {
                 email, doctorId, timeType, date,
-                fullName, timeString, language, doctorName
+                firstName, lastName, timeString, language, doctorName, selectedGender, address, reason, phoneNumber
             } = data || {};
 
             // Validate
-            if (!email || !doctorId || !timeType || !date || !fullName || !timeString || !language) {
+            if (!email || !doctorId || !timeType || !date || !firstName || !lastName || !timeString || !language || !selectedGender || !address || !phoneNumber) {
                 await t.rollback();
                 return resolve({ errCode: 1, errMessage: 'Missing required parameter' });
             }
+            const fullName = firstName + ' ' + lastName;
             const dateMs = Number(date);
             if (!Number.isFinite(dateMs)) {
                 await t.rollback();
                 return resolve({ errCode: 1, errMessage: 'Invalid date value' });
             }
 
+            // Normalize optional reasonText
+            const reasonText =
+                typeof reason === 'string' && reason.trim().length > 0
+                    ? reason.trim()
+                    : null;
+
             // Upsert patient
             const [user] = await db.User.findOrCreate({
                 where: { email },
-                defaults: { email, roleId: 'R3' },
+                defaults: {
+                    email,
+                    roleId: 'R3',
+                    gender: selectedGender,
+                    address,
+                    phoneNumber,
+                    firstName,
+                    lastName
+                },
                 transaction: t,
             });
 
@@ -56,6 +71,7 @@ let saveBookAppointment = (data) => {
                     doctorId,
                     date: dateMs,
                     timeType,
+                    reasonText
                 },
                 transaction: t,
             });
@@ -66,6 +82,9 @@ let saveBookAppointment = (data) => {
 
                 // Persist token into booking
                 booking.token = token;
+                if (reasonText !== null) {
+                    booking.reasonText = reasonText; // NEW: update when pending or newly created
+                }
                 await booking.save({ transaction: t });
 
                 // Build verify URL
@@ -132,7 +151,7 @@ let saveVerifyBookAppointment = (data) => {
                 },
                 transaction: t,
                 lock: t.LOCK.UPDATE,
-                raw:false,
+                raw: false,
             });
 
             if (!booking) {

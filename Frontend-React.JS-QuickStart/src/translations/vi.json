@@ -57,7 +57,8 @@
     },
     "doctor": {
       "manage": "Quản lý",
-      "manage-schedule": "Quản lý kế hoạch khám bệnh"
+      "manage-schedule": "Quản lý kế hoạch khám bệnh",
+      "manage-patient": "Quản lý bệnh nhân khám bệnh"
     }
   },
   "manage-user": {
@@ -107,7 +108,8 @@
     "booking": {
       "title": "Thông tin đặt lịch khám bệnh",
       "time": "Thời gian",
-      "fullname": "Họ và tên",
+      "firstName": "Tên",
+      "lastName": "Họ",
       "phone": "Số điện thoại",
       "email": "Email",
       "address": "Địa chỉ",
@@ -116,7 +118,7 @@
       "cancel": "Hủy",
       "for-who": "Đặt cho ai",
       "gender": "Giới tính",
-      "birthday":"Ngày sinh"
+      "birthday": "Ngày sinh"
     }
   },
   "admin": {
