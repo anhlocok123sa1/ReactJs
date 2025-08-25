@@ -100,7 +100,7 @@ let getExtraInfoDoctorById = async (req, res) => {
 
 let getListPatientForDoctor = async (req, res) => {
     try {
-        let response = await doctorService.getListPatientForDoctor(req.params.doctorId, req.params.date);
+        let response = await doctorService.getListPatientForDoctor(req.query.doctorId, req.query.date);
         return res.status(200).json(response)
     }
     catch (e) {

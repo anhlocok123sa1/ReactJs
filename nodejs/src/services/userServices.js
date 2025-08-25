@@ -23,7 +23,7 @@ let handleUserLogin = (email, password) => {
                 //user already exist
                 let user = await db.User.findOne({
                     where: { email: email },
-                    attributes: ['email', 'roleId', 'password', 'firstName', 'lastName'],
+                    attributes: ['email', 'roleId', 'password', 'firstName', 'lastName', "id"],
                     raw: true
                 })
 
@@ -164,7 +164,7 @@ let deleteUser = async (userId) => {
 let editUser = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.id || !data.roleId || !data.positionId ||!data.gender) {
+            if (!data.id || !data.roleId || !data.positionId || !data.gender) {
                 resolve({
                     errCode: 2,
                     errMessage: "Missing required parameter!"

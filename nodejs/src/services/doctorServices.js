@@ -350,7 +350,7 @@ let getListPatientForDoctor = (doctorId, date) => {
                     errMessage: "Missing required parameter!"
                 })
             } else {
-                let formattedDate = Number(date);
+                let formattedDate = Number(date)
                 let data = await db.Booking.findAll({
                     where: {
                         statusId: 'S2',
