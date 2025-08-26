@@ -2,6 +2,7 @@ import { where } from "sequelize";
 import db from "../models"
 require('dotenv').config();
 import _, { add, includes } from 'lodash';
+import emailServices from './emailServices'
 
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE || 10;
 
@@ -385,6 +386,74 @@ let getListPatientForDoctor = (doctorId, date) => {
     })
 }
 
+const sendRemedy = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const { email, doctorId, patientId, timeType, language } = data;
+
+            // Kiểm tra các trường bắt buộc
+            if (!doctorId || !email || !patientId || !timeType || !language) {
+                return reject({
+                    errCode: 1,
+                    errMessage: "Missing required parameter!"
+                });
+            }
+
+            // Kiểm tra định dạng email cơ bản (nếu cần)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return reject({
+                    errCode: 2,
+                    errMessage: "Invalid email format!"
+                });
+            }
+
+            // Tìm lịch khám có trạng thái S2 (đã xác nhận)
+            const appointment = await db.Booking.findOne({
+                where: {
+                    doctorId,
+                    patientId,
+                    timeType,
+                    statusId: 'S2'
+                },
+                raw: false
+            });
+
+            if (!appointment) {
+                return reject({
+                    errCode: 3,
+                    errMessage: "No appointment found or already processed!"
+                });
+            }
+
+            // Cập nhật trạng thái sang S3 (đã gửi đơn thuốc)
+            appointment.statusId = 'S3';
+            await appointment.save();
+
+            // Gửi email đính kèm đơn thuốc
+            await emailServices.sendAttachment(data);
+
+            return resolve({
+                errCode: 0,
+                errMessage: 'SendRemedy success!',
+                bookingId: appointment.id
+            });
+
+        } catch (error) {
+            console.error('Error in sendRemedy:', error);
+            return reject({
+                errCode: -1,
+                errMessage: 'Server error',
+                error
+            });
+        }
+    });
+};
+
+module.exports = {
+    sendRemedy
+};
+
 
 
 module.exports = {
@@ -396,4 +465,5 @@ module.exports = {
     getDoctorSchedule: getDoctorSchedule,
     getExtraInfoDoctorById: getExtraInfoDoctorById,
     getListPatientForDoctor: getListPatientForDoctor,
+    sendRemedy: sendRemedy
 }

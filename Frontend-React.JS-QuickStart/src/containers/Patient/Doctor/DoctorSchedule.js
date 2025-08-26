@@ -9,6 +9,7 @@ import { LANGUAGES } from '../../../utils'
 import * as actions from '../../../store/actions';
 import { FormattedMessage } from 'react-intl';
 import BookingModal from './Modal/BookingModal';
+import LoadingOverlay from 'react-loading-overlay'
 
 
 class DoctorSchedule extends Component {
@@ -146,7 +147,7 @@ class DoctorSchedule extends Component {
 
     render() {
         let { allDays, selectedDay, allAvalableTime } = this.state;
-        let { language } = this.props
+        let { language, isLoadingPatientBookingAppointment } = this.props
         let customStyles = {
             control: (provided, state) => (
                 {
@@ -200,7 +201,10 @@ class DoctorSchedule extends Component {
         };
 
         return (
-            <>
+            <><LoadingOverlay
+                active={isLoadingPatientBookingAppointment}
+                spinner
+            >
                 <div className="doctor-schedule-container">
                     <div className="all-schedule">
                         {allDays.length > 0 &&
@@ -255,6 +259,7 @@ class DoctorSchedule extends Component {
                     closeBookingModal={this.toggleBookingModal}
                     dataTime={this.state.selectedSchedule}
                 />
+            </LoadingOverlay>
             </>
         );
     }
@@ -265,6 +270,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         language: state.app.language,
         doctorSchedule: state.admin.doctorScheduleById?.[ownProps.doctorId],
+        isLoadingPatientBookingAppointment: state.admin.isLoadingPatientBookingAppointment
     };
 };
 

@@ -57,6 +57,8 @@ const initialState = {
     editSpecialtyResult: null,
     isLoadingListPatientForDoctor: false,
     listPatientForDoctor: [],
+    isSendingRemedy: false,
+    resultRemedy: {}
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -345,6 +347,18 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 isLoadingListPatientForDoctor: false,
                 listPatientForDoctor: action.data || { errCode: -1, errMessage: 'Error' }
+            };
+        //SEND REMEDY
+        case actionTypes.SEND_REMEDY_START:
+            return { ...state, isSendingRemedy: true };
+        case actionTypes.SEND_REMEDY_SUCCESS:
+
+            return { ...state, isSendingRemedy: false, resultRemedy: action.data };
+        case actionTypes.SEND_REMEDY_FAILED:
+            return {
+                ...state,
+                isSendingRemedy: false,
+                resultRemedy: action.data || { errCode: -1, errMessage: 'Error' }
             };
 
         default:

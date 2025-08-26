@@ -279,6 +279,7 @@ class BookingModal extends Component {
                                     value={selectedGender}
                                     onChange={this.handleOnchangeSelect}
                                     options={genders}
+                                    menuPlacement="top"
                                 />
                             </div>
                         </div>

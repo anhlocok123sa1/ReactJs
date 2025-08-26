@@ -8,8 +8,10 @@ import {
     getDoctorScheduleServices,
     getExtraInfoDoctorById,
     getAllCodeServices,
-    getListPatientForDoctorServices
+    getListPatientForDoctorServices,
+    sendRemedyServices
 } from '../../services/userService';
+import { toast } from 'react-toastify';
 
 // ============== TOP DOCTOR HOME ==============
 export const fetchTopDoctorHome = () => {
@@ -102,8 +104,14 @@ export const saveBulkScheduleDoctor = (data) => {
         try {
             dispatch({ type: actionTypes.SAVE_BULK_SCHEDULE_DOCTOR_START });
             const res = await bulkCreateScheduleServices(data);
-            if (res && res.errCode === 0) dispatch(saveBulkScheduleDoctorSuccess());
-            else dispatch(saveBulkScheduleDoctorFailed());
+            if (res && res.errCode === 0) {
+                dispatch(saveBulkScheduleDoctorSuccess());
+                toast.success("Lưu thành công!")
+            }
+            else {
+                dispatch(saveBulkScheduleDoctorFailed());
+                toast.error("Lưu thất bại!")
+            }
         } catch (e) {
             dispatch(saveBulkScheduleDoctorFailed());
             console.error('save bulk schedule doctor error:', e);
@@ -163,3 +171,28 @@ export const getListPatientForDoctor = (doctorId, date) => {
 };
 export const getListPatientForDoctorSuccess = (data, doctorId, date) => ({ type: actionTypes.GET_LIST_PATIENT_FOR_DOCTOR_SUCCESS, data, doctorId, date });
 export const getListPatientForDoctorFailed = () => ({ type: actionTypes.GET_LIST_PATIENT_FOR_DOCTOR_FAILED });
+
+// ============== SEND REMEDY ==============
+export const sendRemedy = (data) => {
+    return async (dispatch) => {
+        try {
+            dispatch({ type: actionTypes.SEND_REMEDY_START, data });
+            const res = await sendRemedyServices(data);
+            if (res && res.errCode === 0) {
+                dispatch(sendRemedySuccess(res));
+                toast.success("Send remedy success!");
+            }
+            else {
+                dispatch(sendRemedyFailed());
+                toast.error("Send remedy failed!");
+            }
+        } catch (e) {
+            dispatch(sendRemedyFailed());
+            toast.error('SEND REMEDY error:');
+            console.error('SEND REMEDY error:', e);
+        }
+    };
+};
+export const sendRemedySuccess = (data) => ({ type: actionTypes.SEND_REMEDY_SUCCESS, data });
+export const sendRemedyFailed = () => ({ type: actionTypes.SEND_REMEDY_FAILED });
+
